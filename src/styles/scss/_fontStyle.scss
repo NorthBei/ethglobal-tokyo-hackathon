@@ -31,19 +31,25 @@ $lineList: (
 );
 
 @mixin textFont($value) {
-  font-family: 'NotoSansJP-Regular';
+  font-family: 'NotoSansRegular';
   font-size: map-get($sizeList, $value);
   font-weight: 400;
 }
 
 @mixin subTitleFont($value) {
-  font-family: 'NotoSansJP-Medium';
+  font-family: 'NotoSansMedium';
   font-size: map-get($sizeList, $value);
   font-weight: 500;
 }
 
 @mixin titleFont($value) {
-  font-family: 'NotoSansJP-Bold';
+  font-family: 'NotoSansBold';
+  font-size: map-get($sizeList, $value);
+  font-weight: 700;
+}
+
+@mixin dominantFont($value) {
+  font-family: 'NotoSansBoldItalic';
   font-size: map-get($sizeList, $value);
   font-weight: 700;
 }

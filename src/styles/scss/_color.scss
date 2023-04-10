@@ -4,11 +4,14 @@ $dark-80: #000000cc;
 $dark-60: #00000099;
 $dark-40: #d9d9d9;
 $dark-20: #efefef;
-$dark-0: #ffffff;
 
 /* Colors */
-$gray-01: #a1a1a1;
+$dark-0: #ffffff;
+$dark-100: #000;
+$gray-01: #f8f8f9;
 $gray-02: #3f3f3f;
+$gray-03: #c6c6c6;
+
 $blue: #325de3;
 $blue-gray: #97a8db;
 $dark-40: #d9d9d9;
@@ -42,8 +45,17 @@ $themes: (
     main-green: #7bb22a,
     main-blue: #2399d7,
     main-purple: #a674b0,
+    gray-01: #f8f8f9,
     gray-02: #3f3f3f,
-    bg-translucent: $bg-translucent,
+    gray-03: #c6c6c6,
+    dark-0: #fff,
+    dark-100: #000,
+    bg-translucent:
+      linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.25),
+        rgba(255, 255, 255, 0.25)
+      ),
   ),
   dark: (
     main-red: #e55024,
@@ -51,8 +63,17 @@ $themes: (
     main-green: #7bb22a,
     main-blue: #2399d7,
     main-purple: #a674b0,
+    gray-01: #f8f8f9,
     gray-02: #3f3f3f,
-    bg-translucent: $bg-translucent,
+    gray-03: #c6c6c6,
+    dark-0: #fff,
+    dark-100: #000,
+    bg-translucent:
+      linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.25),
+        rgba(255, 255, 255, 0.25)
+      ),
   ),
 );
 
@@ -75,7 +96,11 @@ $themes: (
     background-color: themed($color);
   }
 }
-
+@mixin background($color) {
+  @include themeify {
+    background: themed($color);
+  }
+}
 /* 顏色 */
 @mixin color($color) {
   @include themeify {

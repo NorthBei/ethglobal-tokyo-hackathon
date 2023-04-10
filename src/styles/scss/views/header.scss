@@ -1,0 +1,40 @@
+.header {
+  background-color: #fff;
+  line-height: 64px;
+  h1 {
+    @include titleFont(24);
+  }
+  .ant-row {
+    height: inherit;
+    padding-inline: 5%;
+  }
+  .logo-img {
+    width: 150px;
+  }
+  .lang-img {
+    width: 30px;
+  }
+  .profile {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #c4c4c4;
+  }
+  .profile-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: auto;
+  }
+  .navbar-area {
+    padding-inline: 0;
+    span {
+      @include subTitleFont(16);
+    }
+  }
+  // @include color('main-red');
+}
