@@ -1,4 +1,12 @@
-import { Button, Col, Divider, Modal, Row, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Divider,
+  InputNumber,
+  Modal,
+  Row,
+  Typography,
+} from 'antd';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -8,7 +16,10 @@ import PrizeList from '../../components/PrizeList';
 
 const { Title, Text } = Typography;
 const textSize = 24;
-
+const gameTitle = 'Korem ipsum dolor sit';
+const gameDesc =
+  'Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit Korem ipsum dolor sit';
+const gamePrice = 10;
 function ConfirmModal({ open, onOk, onCancel, price, amount }) {
   return (
     <Modal footer={null} title="Draw" open={open}>
@@ -80,12 +91,49 @@ function GameItems() {
           <Col span={12}>
             <Row gutter={[24, 40]}>
               <GameDetail
-                amount={amount}
-                setAmount={setAmount}
-                showModal={showModal}
+                title={gameTitle}
+                desc={gameDesc}
                 img={gamesImg}
-                drawable={false}
-              />
+                pirce={gamePrice}
+              >
+                <Col span={24}>
+                  <Row>
+                    <Col span={12}>
+                      <Row justify="center">
+                        <Button
+                          type="primary"
+                          style={{ padding: '8px', width: 50, height: 50 }}
+                          onClick={() => {
+                            setAmount(amount > 1 ? amount - 1 : 1);
+                          }}
+                        >
+                          -
+                        </Button>
+                        <InputNumber
+                          min={1}
+                          max={10}
+                          value={amount}
+                          onChange={setAmount}
+                        />
+                        <Button
+                          type="primary"
+                          style={{ padding: '8px', width: 50, height: 50 }}
+                          onClick={() => {
+                            setAmount(amount < 10 ? amount + 1 : 10);
+                          }}
+                        >
+                          +
+                        </Button>
+                      </Row>
+                    </Col>
+                    <Col span={12}>
+                      <Button size="large" onClick={showModal} block>
+                        Draw
+                      </Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </GameDetail>
             </Row>
           </Col>
           <Col span={12} className="list-area">
