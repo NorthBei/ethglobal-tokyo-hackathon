@@ -71,50 +71,7 @@ $height-footer: 152px;
     }
   }
   // ---------- Layout 結束 ----------
-  // ---------- Tab 開始 ----------
-  .ant-tabs {
-    @include color('color-gray-3');
-    .ant-tabs-nav-wrap {
-      @include border('color-gray-1');
-      border-bottom: 2px solid;
-    }
-    .ant-tabs-nav-list {
-      width: 100%;
-      justify-content: center;
-    }
-    .ant-tabs-tab {
-      width: 50%;
-    }
-    .ant-tabs-tab-btn {
-      width: 100%;
-      text-align: center;
-    }
-    .ant-tabs-ink-bar {
-      display: none;
-    }
-    .ant-tabs-tab-active {
-      position: relative;
-      .ant-tabs-tab-btn {
-        @include color('color-primary');
-      }
-      &::after {
-        display: block;
-        content: '';
-        width: 50%;
-        height: 2px;
-        @include background_color('color-primary');
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 0 auto;
-      }
-    }
-    .ant-tabs-content {
-      @include color('color-1');
-    }
-  }
-  // ---------- Tab 結束 ----------
+  
   // ---------- Button 開始 ----------
   .ant-btn {
     box-shadow: none;
