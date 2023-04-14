@@ -1,79 +1,97 @@
-import { Col, Row,  Button, Typography } from 'antd'
-import { useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { Button, Col, Row, Typography } from 'antd';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+
+import gamesImg from '../../../../public/assets/images/cat.png';
+import styles from '../../../styles/Game.module.css';
 
 const { Text } = Typography;
 
-const Result = () => {
-  const router = useRouter()
-  const { tx_id } = router.query
+function Prize({ data }) {
+  return (
+    <>
+      {data.map((pack, i) => (
+        <Col span={24} className="item-block" key={i}>
+          <Row gutter={[20, 12]} justify="space-between" align="middle">
+            <Col span={12}>
+              <div className={styles['item-img-wrapper']}>
+                <Image src={gamesImg} width={150} height={150} alt="item" />
+              </div>
+            </Col>
+            <Col span={12}>
+              <Row>
+                <Col span={24} className="type">
+                  <Text>{pack.type}</Text>
+                </Col>
+                <Col span={24} className="name">
+                  <Text>{pack.name}</Text>
+                </Col>
+                <Col span={24} className="id">
+                  <Text>{pack.id}</Text>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Col>
+      ))}
+    </>
+  );
+}
+
+function Result() {
+  const router = useRouter();
+  const { tx_id } = router.query;
   const [stage, setStage] = useState(0);
   const stageTexts = ['Waiting for drawing  🚀', 'Congrats 🎉'];
   const data = [
-    { name: 'Collection 1', id: '100001' },
-    { name: 'Collection 2', id: '100002' },
-    { name: 'Collection 3', id: '100003' },
-    { name: 'Collection 4', id: '100004' },
-    { name: 'Collection 5', id: '100005' },
-  ]
+    { type: 'A', name: 'Fantasty Prize', id: '100001' },
+    { type: 'B', name: 'Fantasty Prize', id: '100002' },
+    { type: 'C', name: 'Fantasty Prize', id: '100003' },
+  ];
 
-  const ResultContent = ({ data }) => {
-    return (
-      <>
-        {data.map((pack, i) => (
-            <Col span={24} gutter={[12, 12]} className="collection-wrapper" key={i}>
-              <Row className="type" justify="center">
-                {pack.name}
-              </Row>
-              <Row className="id" justify="center">
-                {pack.id}
-              </Row>
-            </Col>
-        ))}
-      </>
-    )
-  }
-
+  setTimeout(() => {
+    setStage(1);
+  }, 5000);
   return (
-    <>
-      <section className="account">
-        <div className="content">
-          <Row align={'middle'} gutter={[0, 24]}>
+    <section className="account">
+      <div className="content">
+        <Row align="middle" gutter={[0, 24]}>
+          <Col span={12} offset={6}>
+            <Row justify="center">
+              <Text style={{ color: 'black' }}>{tx_id}</Text>
+            </Row>
+          </Col>
+          <Col span={12} offset={6}>
+            <Row justify="center">
+              <Text style={{ color: 'black' }}>{stageTexts[stage]}</Text>
+            </Row>
+          </Col>
+          {stage === 1 ? (
             <Col span={12} offset={6}>
-              <Row justify={'center'}>
-                <Text style={{ color: 'white' }}>
-                  {tx_id}
-                </Text>
+              <Row justify="center">
+                <Prize data={data} />
               </Row>
             </Col>
-            <Col span={12} offset={6}>
-              <Row justify={'center'}>
-                <Text style={{ color: 'white' }}>
-                  {stageTexts[stage]}
-                </Text>
-              </Row>
-            </Col>
-            <Col span={12} offset={6}>
-              <Row justify={'center'}>
-                <ResultContent data={data} />
-              </Row>
-            </Col>
-            {stage === 1 ? (
+          ) : (
+            ''
+          )}
+          {stage === 1 ? (
             <Col span={8} offset={8}>
-              <Link href={'/account'}>
-                <Button type={'primary'} block size='large'>
+              <Link href="/account">
+                <Button type="primary" block size="large">
                   Check
                 </Button>
               </Link>
             </Col>
-            ) : ''}
-          </Row>
-        </div>
-      </section>
-    </>
-  )
+          ) : (
+            ''
+          )}
+        </Row>
+      </div>
+    </section>
+  );
 }
 
-export default Result
+export default Result;
