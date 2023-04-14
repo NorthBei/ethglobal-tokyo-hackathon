@@ -76,8 +76,6 @@ export default function Home() {
 
     Object.keys(marks).forEach((rangeValue, index) => {
       if (rangeValue <= formData.prizeGradesRange) {
-        console.log(formData.prizeContents, index);
-
         const isCompleted =
           formData.prizeContents[index] &&
           formData.prizeContents[index].thumbnailCid &&

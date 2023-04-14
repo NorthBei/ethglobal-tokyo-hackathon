@@ -1,5 +1,6 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
+import Image from 'next/image';
 import { useState } from 'react';
 
 const getBase64 = (img, callback) => {
@@ -32,7 +33,6 @@ function PhotoUpload(props) {
       return;
     }
     if (info.file.status === 'done') {
-      console.log(info.file.response.data);
       if (info.file.response.data) {
         onCidChange(info.file.response.data);
       }
@@ -66,12 +66,13 @@ function PhotoUpload(props) {
       onChange={handleChange}
     >
       {imageUrl ? (
-        <img
+        <Image
           src={imageUrl}
           alt="avatar"
           style={{
             width: '100%',
           }}
+          fill
         />
       ) : (
         uploadButton
