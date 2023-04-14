@@ -5,7 +5,7 @@
       text-align: center;
     }
     .name {
-      @include titleFont(24);
+      @include titleFont(16);
     }
   }
   .profile-wrapper {

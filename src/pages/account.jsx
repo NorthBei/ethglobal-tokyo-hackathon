@@ -1,4 +1,4 @@
-import { Button, Col, Row, Typography } from 'antd';
+import { Button, Col, Row, Space, Typography } from 'antd';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi';
@@ -30,7 +30,7 @@ function List({ type, data }) {
                     {item.id}
                   </Col>
                   <Col span={6}>
-                    {pack.length === i + 1 ? (
+                    {pack.length === j + 1 ? (
                       <Button type="primary" shape="round" size="middle">
                         {type === 'prizes' ? 'Claim' : 'Details'}
                       </Button>
@@ -96,7 +96,7 @@ function Account() {
               </Col>
               <Col span={24}>
                 <Text className="name">
-                  {ensName}
+                  {ensName || address}
                   {/* {ensName
                     ? `${ensName} (${shortenAddress(address, 5, 5)})`
                     : shortenAddress(address, 5, 5)} */}
@@ -117,8 +117,18 @@ function Account() {
             </Row>
           </Col>
           {/* 列表 */}
-          <Col span={13} className="list-area">
+          <Col span={13}>
             <Row gutter={[24, 15]}>
+              <Space size={[12, 8]} wrap>
+                <Button>Game 1</Button>
+                <Button>Game 2</Button>
+                <Button>Game 3</Button>
+                <Button>Game 4</Button>
+                <Button>Game 5</Button>
+                <Button>Game 6</Button>
+              </Space>
+            </Row>
+            <Row gutter={[24, 15]} className="list-area">
               {type === 'prizes' && <List type={type} data={prizeData} />}
               {type === 'collected' && <List type={type} data={collectData} />}
             </Row>
@@ -127,24 +137,28 @@ function Account() {
           <Col sm={5} className="cate-area">
             <Row gutter={[36, 36]}>
               <Col span={24}>
-                <Text
+                <Button
+                  type="text"
+                  shape="round"
                   className={type === 'prizes' ? 'active' : ''}
                   onClick={() => {
                     setType('prizes');
                   }}
                 >
                   Prizes
-                </Text>
+                </Button>
               </Col>
               <Col span={24}>
-                <Text
+                <Button
+                  type="text"
+                  shape="round"
                   className={type === 'collected' ? 'active' : ''}
                   onClick={() => {
                     setType('collected');
                   }}
                 >
                   Collected
-                </Text>
+                </Button>
               </Col>
             </Row>
           </Col>
