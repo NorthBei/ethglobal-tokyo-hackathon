@@ -9,8 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "antd": "^5.4.0",
+    "@ant-design/icons": "^5.0.1",
     "@rainbow-me/rainbowkit": "^0.12.8",
+    "antd": "^5.4.0",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
     "ethers": "^5.7.2",
@@ -23,7 +24,7 @@
     "wagmi": "^0.12.10"
   },
   "engines": {
-   
+    "node": ">=16.16.0",
     "yarn": "1.22.19"
   },
   "devDependencies": {
