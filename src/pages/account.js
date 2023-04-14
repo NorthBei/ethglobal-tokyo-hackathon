@@ -3,6 +3,8 @@ import { Divider, Steps } from 'antd'
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
+import { shortenAddress } from '@/utils/shortenAddress'
 import defaultProfile from '../../public/assets/images/default-profile.webp'
 import polygon from '../../public/assets/images/polygon.png'
 import productImg from '../../public/assets/images/product.jpg'
@@ -36,6 +38,10 @@ const Account = () => {
     ],
     [{ type: 'E', id: '1240123123123' }],
   ]
+
+  const { address } = useAccount()
+  const { data: ensAvatar } = useEnsAvatar({ address })
+  const { data: ensName } = useEnsName({ address })
 
   const List = ({ type, data }) => {
     return (
@@ -86,14 +92,18 @@ const Account = () => {
               <Row gutter={[16, 16]}>
                 <Col span={24} className="profile-wrapper">
                   <div className="profile">
-                    <Image src={defaultProfile} alt="" />
+                    <Image src={ensAvatar || defaultProfile} alt="" />
                   </div>
                 </Col>
                 <Col span={24}>
-                  <p className="name">ens name</p>
+                  <p className="name">
+                    {ensName
+                      ? `${ensName} (${shortenAddress(address, 5, 5)})`
+                      : shortenAddress(address, 5, 5)}
+                  </p>
                 </Col>
                 <Col span={24}>
-                  <div>
+                  {/* <div>
                     <Input
                       className="balance"
                       prefix={
@@ -102,7 +112,7 @@ const Account = () => {
                         </>
                       }
                     />
-                  </div>
+                  </div> */}
                 </Col>
               </Row>
             </Col>
