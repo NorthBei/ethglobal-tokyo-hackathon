@@ -19,6 +19,7 @@
     "next-qrcode": "^2.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.43.9",
     "sass": "^1.56.1",
     "sass-loader": "^13.2.0",
     "wagmi": "^0.12.10"
@@ -28,6 +29,7 @@
     "yarn": "1.22.19"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.3.1",
     "eslint": "8.38.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "13.3.0",
