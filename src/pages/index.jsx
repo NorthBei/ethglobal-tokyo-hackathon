@@ -1,6 +1,11 @@
+import { Col, Row } from 'antd';
 import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
 
-export default function Home() {
+import gamesImg from '../../public/assets/images/cat.png';
+
+function List({ data }) {
   return (
     <>
       <Head>
@@ -9,7 +14,49 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main />
+      {data.map((pack, i) => (
+        <Col span={6} gutter={[12, 12]} className="collection-wrapper" key={i}>
+          <Link href={`/games/${pack.id}`}>
+            <Row justify="center">
+              <Image
+                src={gamesImg}
+                width={150}
+                height={150}
+                alt="games"
+                className="item-img"
+              />
+            </Row>
+            <Row className="type" justify="center">
+              {pack.name}
+            </Row>
+            <Row className="id" justify="center">
+              {pack.id}
+            </Row>
+          </Link>
+        </Col>
+      ))}
     </>
   );
 }
+
+function Games() {
+  const gamesData = [
+    { name: 'Collection 1', id: '100001' },
+    { name: 'Collection 2', id: '100002' },
+    { name: 'Collection 3', id: '100003' },
+    { name: 'Collection 4', id: '100004' },
+    { name: 'Collection 5', id: '100005' },
+  ];
+
+  return (
+    <section className="account">
+      <div className="content">
+        <Row justify="space-between" gutter={{ md: 16, sm: 8 }}>
+          <List data={gamesData} />
+        </Row>
+      </div>
+    </section>
+  );
+}
+
+export default Games;
