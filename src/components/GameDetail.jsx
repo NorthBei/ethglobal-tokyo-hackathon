@@ -87,7 +87,7 @@ function GameDetail({
                       fontWeight: '700',
                     }}
                   >
-                    {price} Matic
+                    {price !== null ? `${price} ` : '?'} MATIC
                   </Text>
                 </Row>
               </Col>

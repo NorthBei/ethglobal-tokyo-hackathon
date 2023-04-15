@@ -20,7 +20,6 @@ import cidToImageUrl from '../../utils/cidToImageUrl';
 
 const { Title, Text } = Typography;
 const textSize = 24;
-const gamePrice = 10;
 
 function ConfirmModal({
   open,
@@ -99,7 +98,7 @@ function GameItems() {
         value: ethers.BigNumber.from(
           ethers.utils.parseUnits(`${gameDetail?.price || 0}`, 18)
         )
-          .mul(ethers.BigNumber.from(amount))
+          .mul(ethers.BigNumber.from(`${amount}`))
           .toString(),
       },
     ],
@@ -166,10 +165,10 @@ function GameItems() {
           title={gameDetail?.title || ''}
           desc={gameDetail?.intro || ''}
           img={cidToImageUrl(gameDetail?.cover) || gamesImg}
-          price={gameDetail?.price || gamePrice}
+          price={gameDetail?.price || null}
           amount={amount}
           prizeList={prizeList || []}
-          onAmountChange={(v) => setAmount(parseInt(v, 10))}
+          onAmountChange={(v) => setAmount(v)}
           onDraw={showModal}
           isConnected={isConnected}
         />
