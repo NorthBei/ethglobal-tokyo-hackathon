@@ -4,7 +4,7 @@ const nextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: true,
-    domains: ['gateway.pinata.cloud'],
+    domains: ['natoboram.gitlab.io'],
   },
 };
 

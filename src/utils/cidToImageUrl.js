@@ -1,3 +1,3 @@
 export default function cidToImageUrl(cid) {
-  return `https://gateway.pinata.cloud/ipfs/${cid}`;
+  return `https://natoboram.gitlab.io/public-gateway-cacher/${cid}`;
 }
