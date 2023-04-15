@@ -1,4 +1,4 @@
-import { Button, Col, Modal, QRCode, Row, Space, Tag, Typography } from 'antd';
+import { Button, Col, Modal, QRCode, Row, Space, Typography } from 'antd';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import Image from 'next/image';
