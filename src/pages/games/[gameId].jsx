@@ -19,7 +19,6 @@ import ichibanContract from '../../contracts/ichiban';
 import cidToImageUrl from '../../utils/cidToImageUrl';
 
 const { Title, Text } = Typography;
-const textSize = 24;
 
 function ConfirmModal({
   open,
@@ -32,27 +31,49 @@ function ConfirmModal({
 }) {
   const bigPrice = ethers.utils.parseUnits(`${price || 0}`, 18);
   const bigAmount = ethers.BigNumber.from(amount);
-  const total = bigPrice.mul(bigAmount).toString() / 1e18;
+  const totalNum = bigPrice.mul(bigAmount) / 1e18;
+  const total = `${totalNum}`.split('-')[1]
+    ? totalNum.toFixed(`${totalNum}`.split('-')[1])
+    : totalNum;
   return (
-    <Modal footer={null} title="Draw" width={500} open={open}>
-      <Row justify="center">
-        <Title level={1}>Total Spend</Title>
-      </Row>
+    <Modal
+      footer={null}
+      title="Total Spend"
+      width={500}
+      open={open}
+      onCancel={() =>
+        parseFloat(balance?.data?.formatted || 0) < total || onDraw
+          ? null
+          : onCancel()
+      }
+    >
+      <Divider />
       <Row gutter={24} justify="center">
         <Col justify="center" span={18}>
-          <Text fontSize={textSize}>{`Price per draw: ${price || '?'}`}</Text>
+          <Title level={3}>Price per draw:</Title>
+          <Text>{`${price || '?'} MATIC`}</Text>
         </Col>
+        <Divider />
         <Col justify="center" span={18}>
-          <Text fontSize={textSize}>{`Amount: ${amount}`}</Text>
+          <Title level={3}>Amount:</Title>
+          <Text>{`Amount: ${amount}`}</Text>
         </Col>
+        <Divider />
         <Col justify="center" span={18}>
-          <Text fontSize={textSize}>{`Total: ${total}`}</Text>
+          <Title level={3}>Total:</Title>
+          <Text>{`${total} MATIC`}</Text>
         </Col>
       </Row>
       <Divider />
       <Row justify="center" gutter={12}>
         <Col span={10}>
-          <Button onClick={onCancel} block>
+          <Button
+            onClick={onCancel}
+            block
+            disabled={
+              parseFloat(balance?.data?.formatted || 0) < total || onDraw
+            }
+          >
             Cancel
           </Button>
         </Col>
@@ -160,7 +181,10 @@ function GameItems() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main style={{ paddingTop: '60px', paddingBottom: '180px' }}>
+      <main
+        className="game-items"
+        style={{ paddingTop: '60px', paddingBottom: '180px' }}
+      >
         <GameDetail
           title={gameDetail?.title || ''}
           desc={gameDetail?.intro || ''}
