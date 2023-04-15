@@ -106,46 +106,50 @@ function ClaimModal({ isOpen, onClose, gameId, prize }) {
   );
 }
 
-function List({ type, data, onPrizeClaim }) {
+function List({ type, listTitle, data, onPrizeClaim }) {
   return (
-    <Col span={24} className="item-block">
-      <Row gutter={[16, 12]}>
-        {data.map((prize, j) => (
-          <Col span={24} key={j}>
-            <Row gutter={[20, 12]} justify="space-between" align="middle">
-              <Col span={5}>
-                <div className="item-img-wrapper">
-                  <Image
-                    src={cidToImageUrl(prize.ipfs)}
-                    alt=""
-                    height={100}
-                    width={100}
-                  />
-                </div>
-              </Col>
-              <Col span={4} className="prize">
-                {prize.id}
-              </Col>
-              <Col span={6} className="id">
-                {prize.ipfs}
-              </Col>
-              <Col span={6}>
-                <Button
-                  type="primary"
-                  shape="round"
-                  size="middle"
-                  onClick={() => {
-                    if (type === 'prizes' && onPrizeClaim) onPrizeClaim(prize);
-                  }}
-                >
-                  {type === 'prizes' ? 'Claim' : 'Details'}
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        ))}
-      </Row>
-    </Col>
+    <>
+      <Text style={{ fontSize: '24px' }}>{listTitle}</Text>
+      <Col span={24} className="item-block">
+        <Row gutter={[16, 12]}>
+          {data.map((prize, j) => (
+            <Col span={24} key={j}>
+              <Row gutter={[20, 12]} justify="space-between" align="middle">
+                <Col span={5}>
+                  <div className="item-img-wrapper">
+                    <Image
+                      src={cidToImageUrl(prize.ipfs)}
+                      alt=""
+                      height={100}
+                      width={100}
+                    />
+                  </div>
+                </Col>
+                <Col span={4} className="prize">
+                  {`${String.fromCharCode(prize.id + 65)} prize`}
+                </Col>
+                <Col span={6} className="id">
+                  <Text> {prize.ipfs}</Text>
+                </Col>
+                <Col span={6}>
+                  <Button
+                    type="primary"
+                    shape="round"
+                    size="middle"
+                    onClick={() => {
+                      if (type === 'prizes' && onPrizeClaim)
+                        onPrizeClaim(prize);
+                    }}
+                  >
+                    {type === 'prizes' ? 'Claim' : 'Details'}
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          ))}
+        </Row>
+      </Col>
+    </>
   );
 }
 
@@ -187,7 +191,7 @@ function Account() {
         <Row justify="space-between" gutter={32}>
           {/* 個人資訊 */}
           <Col span={5} className="content__info">
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} style={{ position: 'sticky', top: '80px' }}>
               <Col span={24} className="profile-wrapper">
                 <div className="profile">
                   <Image src={ensAvatar || defaultProfile} alt="" />
@@ -199,9 +203,9 @@ function Account() {
             </Row>
           </Col>
           {/* 列表 */}
-          <Col span={13}>
+          <Col span={14}>
             <Row gutter={[24, 24]}>
-              <Col span={24}>
+              {/* <Col span={24}>
                 {gameList ? (
                   <Space size={[12, 8]} wrap>
                     {Object.entries(gameList.gameMap).map((gameArr) => (
@@ -216,9 +220,28 @@ function Account() {
                 ) : (
                   ''
                 )}
-              </Col>
+              </Col> */}
               <Col span={24} className="list-area">
-                {gameList && selectedGameId !== null ? (
+                {gameList ? (
+                  <>
+                    {Object.entries(gameList.playerGameMap).map((game) => (
+                      <List
+                        key={game[0]}
+                        type={type}
+                        data={game[1]}
+                        listTitle={gameList.gameMap[game[0]].title}
+                        onPrizeClaim={(prize) => {
+                          setSelectedGameId(game[0]);
+                          setClaimPrize(prize);
+                          setClaimModalOpen(true);
+                        }}
+                      />
+                    ))}
+                  </>
+                ) : (
+                  ''
+                )}
+                {/* {selectedGameId !== null && gameList ? (
                   <List
                     type={type}
                     data={gameList.playerGameMap[selectedGameId] || []}
@@ -229,13 +252,13 @@ function Account() {
                   />
                 ) : (
                   ''
-                )}
+                )} */}
               </Col>
             </Row>
           </Col>
           {/* 頁籤 */}
-          <Col sm={5} className="cate-area">
-            <Row gutter={[36, 36]}>
+          <Col sm={4} className="cate-area">
+            <Row gutter={[36, 36]} style={{ position: 'sticky', top: '80px' }}>
               <Col span={24}>
                 <Button
                   type="text"
