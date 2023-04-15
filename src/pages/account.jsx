@@ -152,7 +152,7 @@ function List({ type, data, onPrizeClaim }) {
 async function fetcher(url, address, status) {
   if (address) {
     const res = await axios.get(
-      `http://35.243.96.89:9001/app/game/player/prize?address=${`0xf16aa7e201651e7ead5fdd010a5a14589e220826`}&status=${
+      `https://maildeep.info/app/game/player/prize?address=${address}&status=${
         status === 'prizes' ? 'ENABLE' : 'DISABLE'
       }`
     );

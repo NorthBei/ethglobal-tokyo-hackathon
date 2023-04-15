@@ -76,7 +76,7 @@ function Result() {
   useEffect(() => {
     if (!gameList.length) {
       axios({
-        baseURL: 'http://35.243.96.89:9001/app',
+        baseURL: 'https://maildeep.info/app',
         url: '/game/list',
       }).then((res) => {
         const list = res.data?.data.map((i) => ({ ...i, name: i.title })) || [];
