@@ -31,24 +31,26 @@ function ClaimModal({ isOpen, onClose, gameId, prize }) {
     ],
   });
 
+  const nonce = useMemo(() => {
+    if (!userNonce.data) return null;
+    // eslint-disable-next-line no-underscore-dangle
+    if (userNonce.data._isBigNumber) {
+      return userNonce.data.toNumber() + 1;
+    }
+    return userNonce.data + 1;
+  }, [userNonce.data]);
+
   const expireTime = 123456789;
   const message = useMemo(() => {
-    if (!userNonce.data) return null;
+    if (!nonce) return null;
 
     const hex = ethers.utils.solidityKeccak256(
       ['address', 'uint256', 'uint256', 'address', 'uint256', 'uint256'],
-      [
-        ichiban.address,
-        gameId,
-        prize.id,
-        address,
-        userNonce.data + 1,
-        expireTime,
-      ]
+      [ichiban.address, gameId, prize.id, address, nonce, expireTime]
     );
 
     return ethers.utils.arrayify(hex);
-  }, [gameId, prize.id, address, userNonce]);
+  }, [gameId, prize.id, address, nonce]);
 
   const {
     data: signature,
@@ -64,13 +66,14 @@ function ClaimModal({ isOpen, onClose, gameId, prize }) {
       gameId !== null &&
       prize &&
       address &&
+      nonce &&
       expireTime &&
       signature
     ) {
-      return `https://metamask.app.link/dapp/${window.location.host}/redeem?gameId=${gameId}&prizeType=${prize.id}&prizeOwner=${address}&expireTime=${expireTime}&signature=${signature}`;
+      return `https://metamask.app.link/dapp/${window.location.host}/redeem?gameId=${gameId}&prizeType=${prize.id}&prizeOwner=${address}&nonce=${nonce}&expireTime=${expireTime}&signature=${signature}`;
     }
     return null;
-  }, [gameId, prize, address, expireTime, signature]);
+  }, [gameId, prize, address, nonce, expireTime, signature]);
 
   return (
     <Modal
