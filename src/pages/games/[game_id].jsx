@@ -1,31 +1,53 @@
 import { Button, Col, Divider, Modal, Row, Typography } from 'antd';
+import axios from 'axios';
+import { ethers } from 'ethers';
+import find from 'lodash/find';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  useAccount,
+  useBalance,
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi';
 
 import gamesImg from '../../../public/assets/images/cat.png';
 import GameDetail from '../../components/GameDetail';
+import ichibanContract from '../../contracts/ichiban';
+import cidToImageUrl from '../../utils/cidToImageUrl';
 
 const { Title, Text } = Typography;
 const textSize = 24;
 const gamePrice = 10;
-function ConfirmModal({ open, onOk, onCancel, price, amount }) {
+
+function ConfirmModal({
+  open,
+  onOk,
+  onCancel,
+  onDraw,
+  price,
+  amount,
+  balance,
+}) {
+  const bigPrice = ethers.utils.parseUnits(`${price || 0}`, 18);
+  const bigAmount = ethers.BigNumber.from(amount);
+  const total = bigPrice.mul(bigAmount).toString() / 1e18;
   return (
-    <Modal footer={null} title="Draw" open={open}>
+    <Modal footer={null} title="Draw" width={500} open={open}>
       <Row justify="center">
         <Title level={1}>Total Spend</Title>
       </Row>
       <Row gutter={24} justify="center">
-        <Col justify="center" span={15}>
-          <Text fontSize={textSize}>Price per draw:</Text>
-          <Text fontSize={textSize}>{price}</Text>
+        <Col justify="center" span={18}>
+          <Text fontSize={textSize}>{`Price per draw: ${price || '?'}`}</Text>
         </Col>
-        <Col justify="center" span={15}>
-          <Text fontSize={textSize}>Amount:</Text>
-          <Text fontSize={textSize}>{amount}</Text>
+        <Col justify="center" span={18}>
+          <Text fontSize={textSize}>{`Amount: ${amount}`}</Text>
         </Col>
-        <Col justify="center" span={15}>
-          <Text fontSize={textSize}>Total:</Text>
-          <Text fontSize={textSize}>{price * amount}</Text>
+        <Col justify="center" span={18}>
+          <Text fontSize={textSize}>{`Total: ${total}`}</Text>
         </Col>
       </Row>
       <Divider />
@@ -36,8 +58,15 @@ function ConfirmModal({ open, onOk, onCancel, price, amount }) {
           </Button>
         </Col>
         <Col span={10}>
-          <Button type="primary" onClick={onOk} block>
-            Confirm
+          <Button
+            type="primary"
+            disabled={
+              parseFloat(balance?.data?.formatted || 0) < total || onDraw
+            }
+            onClick={onOk}
+            block
+          >
+            {onDraw ? 'Processing...' : 'Confirm'}
           </Button>
         </Col>
       </Row>
@@ -49,48 +78,112 @@ function GameItems() {
   const router = useRouter();
   const { game_id } = router.query;
   const [amount, setAmount] = useState(1);
+  const [gameList, setGameList] = useState([]);
+  const [gameDetail, setGameDetail] = useState({});
+  const [prizeList, setPrizeList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { address, isConnected } = useAccount();
+  const balance = useBalance({
+    address,
+  });
+  const { config } = usePrepareContractWrite({
+    address: ichibanContract.address,
+    abi: ichibanContract.abi,
+    functionName: 'playPhysicalPrizeGame',
+    args: [
+      game_id,
+      amount,
+      {
+        gasLimit: 1000000,
+        value: ethers.BigNumber.from(
+          ethers.utils.parseUnits(`${gameDetail?.price || 0}`, 18)
+        )
+          .mul(ethers.BigNumber.from(amount))
+          .toString(),
+      },
+    ],
+  });
+  const {
+    data: txData,
+    isLoading: isTxSentLoading,
+    write: draw,
+  } = useContractWrite(config);
+  const {
+    data: result,
+    isSuccess: isTxSuccess,
+    isLoading: isTxLoading,
+  } = useWaitForTransaction({
+    hash: txData?.hash || null,
+  });
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
-    setIsModalOpen(false);
-    const tx_id = '0xng9843fn9823nff3290fj2';
-    router.push(`/games/result/${tx_id}`);
+    draw();
   };
-
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const collectData = [
-    { type: 'A', name: 'Fantasty Prize', id: '100001', remainAmount: 5 },
-    { type: 'B', name: 'Fantasty Prize', id: '100002', remainAmount: 10 },
-    { type: 'C', name: 'Fantasty Prize', id: '100003', remainAmount: 7 },
-    { type: 'D', name: 'Fantasty Prize', id: '100004', remainAmount: 7 },
-    { type: 'E', name: 'Fantasty Prize', id: '100005', remainAmount: 7 },
-  ].map((prize) => ({ ...prize, img: gamesImg }));
 
+  useEffect(() => {
+    if (!gameList.length) {
+      axios({
+        baseURL: 'http://35.243.96.89:9001/app',
+        url: '/game/list',
+      }).then((res) => {
+        const list = res.data?.data.map((i) => ({ ...i, name: i.title })) || [];
+        setGameList(list);
+      });
+    } else {
+      const detail = find(gameList, { gameId: parseInt(game_id, 10) });
+      const prizes = detail?.prizeInfo.map((prize, index) => ({
+        type: String.fromCharCode(97 + index).toUpperCase(),
+        remainAmount: prize.remain,
+        img: cidToImageUrl(prize.ipfs),
+      }));
+      setGameDetail(detail);
+      setPrizeList(prizes);
+    }
+    if (isTxSuccess) {
+      const ichibanInterface = new ethers.utils.Interface(ichibanContract.abi);
+      const { logs } = result;
+      const decodedLog = ichibanInterface.parseLog(logs[4]);
+      router.push(`/games/result/${game_id}/${decodedLog.args.requestId}`);
+    }
+  }, [router, gameList, game_id, isTxSuccess, txData, result]);
   return (
-    <main style={{ paddingTop: '60px', paddingBottom: '180px' }}>
-      <GameDetail
-        title="Fake Name Generator 隨機身分產生器"
-        desc="在某些情況下，我們會需要捏造另一個（或一群）不存在的身分，不代表現實生活中的任何人，難以被辨識出來，卻又跟真人幾乎一模一樣，例如在開發網站或程式時會用到的個人資料，在網路上註冊、填寫表單時不想洩漏自己的真實身分，在網路上建立一個假身分，用來和現實生活區隔等等，使用 Fake Name Generator 姓名產生器就能快速幫你產生你所需要的相關資料。"
-        img={gamesImg}
-        price={gamePrice}
-        amount={amount}
-        prizeList={collectData}
-        onAmountChange={(v) => setAmount(v)}
-        onDraw={showModal}
-      />
-      <ConfirmModal
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        price={1000}
-        amount={amount}
-      />
-    </main>
+    <>
+      <Head>
+        <title>{`PolyDraw - Game - ${game_id}`}</title>
+        <meta name="description" content="Generated by create next app" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main style={{ paddingTop: '60px', paddingBottom: '180px' }}>
+        <GameDetail
+          title={gameDetail?.title || ''}
+          desc={gameDetail?.intro || ''}
+          img={cidToImageUrl(gameDetail?.cover) || gamesImg}
+          price={gameDetail?.price || gamePrice}
+          amount={amount}
+          prizeList={prizeList}
+          onAmountChange={(v) => setAmount(parseInt(v, 10))}
+          onDraw={showModal}
+          isConnected={isConnected}
+        />
+        <ConfirmModal
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          price={gameDetail?.price || 0}
+          amount={amount}
+          balance={balance}
+          onDraw={isTxSentLoading || isTxLoading}
+        />
+      </main>
+    </>
   );
 }
 
