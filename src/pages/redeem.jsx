@@ -13,17 +13,13 @@ const { Text } = Typography;
 
 function Redeem() {
   const router = useRouter();
-  //   const { gameId, prizeType, prizeOwner, expireTime, signature } = router.query;
+  const { gameId, prizeType, prizeOwner, expireTime, signature } = router.query;
 
   const userNonce = useContractRead({
     address: ichiban.address,
     abi: ichiban.abi,
     functionName: 'getUsedNonces',
-    args: [
-      // player
-      //   prizeOwner,
-      '0xcf3046BE94359D67B89e39812689e6Ab91cf9F28',
-    ],
+    args: [prizeOwner],
   });
 
   const nonce = useMemo(() => {
@@ -37,15 +33,7 @@ function Redeem() {
     address: ichiban.address,
     abi: ichiban.abi,
     functionName: 'claimPhysicalPrize',
-    // args: [gameId, prizeType, prizeOwner, nonce, expireTime, signature],
-    args: [
-      0,
-      3,
-      '0xcf3046BE94359D67B89e39812689e6Ab91cf9F28',
-      nonce,
-      123456789,
-      '0xdc34243896ebae65db67523a9577ffc4f80f0486781c4f6b36d3c5e710b66221700f7e2fec67bd52fa385313b5d670105e6c08d0f9ece5f92269ebdf9cd801061c',
-    ],
+    args: [gameId, prizeType, prizeOwner, nonce, expireTime, signature],
   });
 
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
