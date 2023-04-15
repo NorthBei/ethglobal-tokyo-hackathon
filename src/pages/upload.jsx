@@ -18,7 +18,7 @@ import {
   Tabs,
   Typography,
 } from 'antd';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
@@ -68,7 +68,7 @@ const steps = [
   },
 ];
 
-export default function Home() {
+export default function Upload() {
   const [step, setStep] = useState(0);
 
   const { handleSubmit, control, setValue } = useForm({
@@ -83,7 +83,7 @@ export default function Home() {
       prizeContents: [
         {
           thumbnailCid: '',
-          name: '',
+          // name: '',
           amount: 1,
         },
       ],
@@ -109,7 +109,7 @@ export default function Home() {
           formData.prizeContents[index] &&
           formData.prizeContents[index].thumbnailCid &&
           formData.prizeContents[index].thumbnailCid.length > 0 &&
-          formData.prizeContents[index].name !== '' &&
+          // formData.prizeContents[index].name !== '' &&
           formData.prizeContents[index].amount > 0;
 
         tabs.push({
@@ -133,7 +133,7 @@ export default function Home() {
                   }}
                 />
               </Form.Item>
-              <Form.Item label="prize name" required>
+              {/* <Form.Item label="prize name" required>
                 <Controller
                   control={control}
                   name={`prizeContents.${index}.name`}
@@ -143,7 +143,7 @@ export default function Home() {
                     );
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item label="prize amount" required>
                 <Controller
                   control={control}
@@ -162,11 +162,15 @@ export default function Home() {
     return tabs;
   }, [control, setValue, formData.prizeGradesRange, formData.prizeContents]);
 
-  const { config, error } = usePrepareContractWrite({
+  const { config } = usePrepareContractWrite({
     address: ichiban.address,
     abi: ichiban.abi,
     functionName: 'listPhysicalPrizeGame',
     args: [
+      // _gameTitle
+      formData.package.title,
+      // _gameIntro
+      formData.package.description,
       // _numPrizeTypes
       Math.floor(formData.prizeGradesRange / 10) + 1,
       // _totalItems
@@ -179,18 +183,23 @@ export default function Home() {
       formData.prizeContents.map((item) => item.thumbnailCid),
       // _price
       formData.drawingPrice,
+      // _gameCover
+      formData.package.thumbnailCid,
     ],
   });
 
-  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+  const { isLoading, isSuccess, write } = useContractWrite(config);
 
-  console.log('error', error);
-  console.log(data, isLoading, isSuccess);
-
-  const onSubmit = (values) => {
-    console.log(values);
-    if (write) write();
+  const onSubmit = () => {
+    if (write || !isLoading) write();
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      alert('Success!');
+      window.location.reload();
+    }
+  }, [isSuccess]);
 
   return (
     <main className={styles.main}>
@@ -201,7 +210,10 @@ export default function Home() {
         style={{ width: '100%' }}
         onFinish={handleSubmit(onSubmit)}
       >
-        <DevTool control={control} />
+        {process.env.NODE_ENV === 'development' && (
+          <DevTool control={control} />
+        )}
+
         <Row gutter={32} justify="space-between">
           <Col style={{ flex: '1' }}>
             <Text
