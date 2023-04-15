@@ -1,12 +1,14 @@
 import { Col, Row, Typography } from 'antd';
 import { useQRCode } from 'next-qrcode';
 
+import ichiban from '../contracts/ichiban';
+
 const { Text } = Typography;
 
 function Vc() {
   const { Canvas } = useQRCode();
 
-  const deployedContractAddress = '0x037338701dA162b7fa13d794c2631a5F2DA550D7';
+  const deployedContractAddress = ichiban.address;
 
   const qrProofRequestJson = {
     id: '7f38a193-0918-4a48-9fac-36adfdb8b542',
