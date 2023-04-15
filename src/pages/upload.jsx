@@ -208,9 +208,11 @@ export default function Upload() {
       // _prizeInfo
       formData.prizeContents.map((item) => item.thumbnailCid),
       // _price
-      BigNumber.from(formData.drawingPrice)
-        .mul(BigNumber.from('1000000000000000000'))
-        .toString(),
+      formData.drawingPrice < 1
+        ? formData.drawingPrice
+        : BigNumber.from(formData.drawingPrice)
+            .mul(BigNumber.from('1000000000000000000'))
+            .toString(),
       // _gameCover
       formData.package.thumbnailCid,
     ],
