@@ -18,7 +18,7 @@ import {
   Tabs,
   Typography,
 } from 'antd';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -208,14 +208,15 @@ export default function Upload() {
       // _prizeInfo
       formData.prizeContents.map((item) => item.thumbnailCid),
       // _price
-      formData.drawingPrice < 1
-        ? formData.drawingPrice
-        : BigNumber.from(formData.drawingPrice)
-            .mul(BigNumber.from('1000000000000000000'))
-            .toString(),
+      BigNumber.from(
+        utils.parseUnits(`${formData.drawingPrice || 0}`, 18)
+      ).toString(),
       // _gameCover
       formData.package.thumbnailCid,
     ],
+    onError(e) {
+      console.log(e);
+    },
   });
 
   const { isLoading, isSuccess, write } = useContractWrite(config);
