@@ -205,22 +205,6 @@ function Account() {
           {/* 列表 */}
           <Col span={14}>
             <Row gutter={[24, 24]}>
-              {/* <Col span={24}>
-                {gameList ? (
-                  <Space size={[12, 8]} wrap>
-                    {Object.entries(gameList.gameMap).map((gameArr) => (
-                      <Tag
-                        key={gameArr[1].gameId}
-                        onClick={() => setSelectedGameId(gameArr[1].gameId)}
-                      >
-                        {gameArr[1].title}
-                      </Tag>
-                    ))}
-                  </Space>
-                ) : (
-                  ''
-                )}
-              </Col> */}
               <Col span={24} className="list-area">
                 {gameList ? (
                   <>
@@ -241,18 +225,6 @@ function Account() {
                 ) : (
                   ''
                 )}
-                {/* {selectedGameId !== null && gameList ? (
-                  <List
-                    type={type}
-                    data={gameList.playerGameMap[selectedGameId] || []}
-                    onPrizeClaim={(prize) => {
-                      setClaimPrize(prize);
-                      setClaimModalOpen(true);
-                    }}
-                  />
-                ) : (
-                  ''
-                )} */}
               </Col>
             </Row>
           </Col>
