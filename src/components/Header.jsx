@@ -43,7 +43,7 @@ function HeaderComponent({ style }) {
               <Row justify="end">
                 <Space size={20}>
                   <Link href="/vc">Become Vendor</Link>
-                  <Link href="/upload">Create</Link>
+                  <Link href="/upload">Create Game</Link>
                   <ConnectButton label="Sign in" accountStatus="address" />
                   <Link href="/account">
                     <div className="profile">
