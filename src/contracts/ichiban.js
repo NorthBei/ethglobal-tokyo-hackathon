@@ -1,42 +1,133 @@
-const address = '0xecb504d39723b0be0e3a9aa33d646642d1051ee1';
+const address = '0xeaFaA996c40d8D3300d0505617a594482c331D5E';
 
 const abi = [
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: '_vrfCoordinator',
-        type: 'address',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_keyHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint64',
-        name: '_subscriptionId',
-        type: 'uint64',
-      },
+      { internalType: 'address', name: '_vrfCoordinator', type: 'address' },
+      { internalType: 'bytes32', name: '_keyHash', type: 'bytes32' },
+      { internalType: 'uint64', name: '_subscriptionId', type: 'uint64' },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: 'have',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'want',
-        type: 'address',
-      },
+      { internalType: 'address', name: 'have', type: 'address' },
+      { internalType: 'address', name: 'want', type: 'address' },
     ],
     name: 'OnlyCoordinatorCanFulfill',
     type: 'error',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'gameId',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'prizeOwner',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'claimPrizeType',
+        type: 'uint256',
+      },
+    ],
+    name: 'ClaimPrize',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'gameId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'gameTitle',
+        type: 'string',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'gameIntro',
+        type: 'string',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256[]',
+        name: 'remainPrizeCount',
+        type: 'uint256[]',
+      },
+      {
+        indexed: false,
+        internalType: 'string[]',
+        name: 'prizeInfo',
+        type: 'string[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'price',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'gameCover',
+        type: 'string',
+      },
+    ],
+    name: 'ListPhysicalPrizeGame',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'gameId',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'player',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'requestId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256[]',
+        name: 'wonPrizes',
+        type: 'uint256[]',
+      },
+    ],
+    name: 'OwnedPrizesFulfilled',
+    type: 'event',
   },
   {
     anonymous: false,
@@ -55,6 +146,43 @@ const abi = [
       },
     ],
     name: 'OwnershipTransferred',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'gameId',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'player',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'requestId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint8',
+        name: 'playRounds',
+        type: 'uint8',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'pendingPrizeCount',
+        type: 'uint256',
+      },
+    ],
+    name: 'PlayPhysicalPrizeGame',
     type: 'event',
   },
   {
@@ -96,37 +224,111 @@ const abi = [
     type: 'event',
   },
   {
+    inputs: [],
+    name: 'EPNS_CHANNEL_ADDRESS',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'EPNS_COMM_ADDRESS',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'TRANSFER_REQUEST_ID',
+    outputs: [{ internalType: 'uint64', name: '', type: 'uint64' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: '_usedNonces',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
-      {
-        internalType: 'address',
-        name: '_merchant',
-        type: 'address',
-      },
+      { internalType: 'uint256', name: 'gameId', type: 'uint256' },
+      { internalType: 'uint256', name: 'prizeType', type: 'uint256' },
+      { internalType: 'address', name: 'prizeOwner', type: 'address' },
+      { internalType: 'uint256', name: 'nonce', type: 'uint256' },
+      { internalType: 'uint256', name: 'expireTime', type: 'uint256' },
+      { internalType: 'bytes', name: 'signature', type: 'bytes' },
     ],
-    name: 'addVerifyMerchant',
-    outputs: [],
+    name: 'claimPhysicalPrize',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: '_requestId',
-        type: 'uint256',
-      },
+      { internalType: 'uint256', name: 'gameId', type: 'uint256' },
+      { internalType: 'address', name: 'player', type: 'address' },
     ],
+    name: 'getOwnedPrizes',
+    outputs: [{ internalType: 'uint256[]', name: '', type: 'uint256[]' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'gameId', type: 'uint256' }],
+    name: 'getPhysicalPrizeGamePrizeInfo',
+    outputs: [{ internalType: 'string[]', name: '', type: 'string[]' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'gameId', type: 'uint256' }],
+    name: 'getPhysicalPrizeGamePrizeRemain',
+    outputs: [{ internalType: 'uint256[]', name: '', type: 'uint256[]' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '_requestId', type: 'uint256' }],
     name: 'getRequestStatus',
     outputs: [
+      { internalType: 'bool', name: 'fulfilled', type: 'bool' },
+      { internalType: 'uint256[]', name: 'randomWords', type: 'uint256[]' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getSupportedRequests',
+    outputs: [{ internalType: 'uint64[]', name: 'arr', type: 'uint64[]' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'player', type: 'address' }],
+    name: 'getUsedNonces',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint64', name: 'requestId', type: 'uint64' }],
+    name: 'getZKPRequest',
+    outputs: [
       {
-        internalType: 'bool',
-        name: 'fulfilled',
-        type: 'bool',
-      },
-      {
-        internalType: 'uint256[]',
-        name: 'randomWords',
-        type: 'uint256[]',
+        components: [
+          { internalType: 'uint256', name: 'schema', type: 'uint256' },
+          { internalType: 'uint256', name: 'claimPathKey', type: 'uint256' },
+          { internalType: 'uint256', name: 'operator', type: 'uint256' },
+          { internalType: 'uint256[]', name: 'value', type: 'uint256[]' },
+          { internalType: 'uint256', name: 'queryHash', type: 'uint256' },
+          { internalType: 'string', name: 'circuitId', type: 'string' },
+        ],
+        internalType: 'struct ICircuitValidator.CircuitQuery',
+        name: '',
+        type: 'tuple',
       },
     ],
     stateMutability: 'view',
@@ -135,43 +337,20 @@ const abi = [
   {
     inputs: [],
     name: 'lastRequestId',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: '_numPrizeTypes',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_totalItems',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256[]',
-        name: '_prizeCount',
-        type: 'uint256[]',
-      },
-      {
-        internalType: 'string[]',
-        name: '_prizeInfo',
-        type: 'string[]',
-      },
-      {
-        internalType: 'uint256',
-        name: '_price',
-        type: 'uint256',
-      },
+      { internalType: 'string', name: '_gameTitle', type: 'string' },
+      { internalType: 'string', name: '_gameIntro', type: 'string' },
+      { internalType: 'uint256', name: '_numPrizeTypes', type: 'uint256' },
+      { internalType: 'uint256', name: '_totalItems', type: 'uint256' },
+      { internalType: 'uint256[]', name: '_prizeCount', type: 'uint256[]' },
+      { internalType: 'string[]', name: '_prizeInfo', type: 'string[]' },
+      { internalType: 'uint256', name: '_price', type: 'uint256' },
+      { internalType: 'string', name: '_gameCover', type: 'string' },
     ],
     name: 'listPhysicalPrizeGame',
     outputs: [],
@@ -181,85 +360,47 @@ const abi = [
   {
     inputs: [],
     name: 'owner',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 'physicalPrizeGames',
     outputs: [
-      {
-        internalType: 'address',
-        name: 'gameOwner',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'numPrizeTypes',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'totalItems',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'numPurchasedItems',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'price',
-        type: 'uint256',
-      },
+      { internalType: 'address', name: 'gameOwner', type: 'address' },
+      { internalType: 'uint256', name: 'prizeTypesCount', type: 'uint256' },
+      { internalType: 'uint256', name: 'pendingPrizeCount', type: 'uint256' },
+      { internalType: 'uint256', name: 'remainingPrizeCount', type: 'uint256' },
+      { internalType: 'uint256', name: 'price', type: 'uint256' },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: 'gameId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint8',
-        name: 'playRounds',
-        type: 'uint8',
-      },
+      { internalType: 'uint256', name: 'gameId', type: 'uint256' },
+      { internalType: 'uint8', name: 'playRounds', type: 'uint8' },
     ],
     name: 'playPhysicalPrizeGame',
-    outputs: [],
+    outputs: [{ internalType: 'uint256', name: 'requestId_', type: 'uint256' }],
     stateMutability: 'payable',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: 'requestId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256[]',
-        name: 'randomWords',
-        type: 'uint256[]',
-      },
+      { internalType: 'address', name: '', type: 'address' },
+      { internalType: 'uint64', name: '', type: 'uint64' },
+    ],
+    name: 'proofs',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint256', name: 'requestId', type: 'uint256' },
+      { internalType: 'uint256[]', name: 'randomWords', type: 'uint256[]' },
     ],
     name: 'rawFulfillRandomWords',
     outputs: [],
@@ -274,82 +415,130 @@ const abi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 'requestIds',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint64', name: '', type: 'uint64' }],
+    name: 'requestQueries',
     outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
+      { internalType: 'uint256', name: 'schema', type: 'uint256' },
+      { internalType: 'uint256', name: 'claimPathKey', type: 'uint256' },
+      { internalType: 'uint256', name: 'operator', type: 'uint256' },
+      { internalType: 'uint256', name: 'queryHash', type: 'uint256' },
+      { internalType: 'string', name: 'circuitId', type: 'string' },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
+    inputs: [{ internalType: 'uint64', name: '', type: 'uint64' }],
+    name: 'requestValidators',
+    outputs: [
+      { internalType: 'contract ICircuitValidator', name: '', type: 'address' },
     ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 's_requests',
     outputs: [
-      {
-        internalType: 'bool',
-        name: 'fulfilled',
-        type: 'bool',
-      },
-      {
-        internalType: 'bool',
-        name: 'exists',
-        type: 'bool',
-      },
+      { internalType: 'bool', name: 'fulfilled', type: 'bool' },
+      { internalType: 'bool', name: 'exists', type: 'bool' },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'transferOwnership',
+    inputs: [{ internalType: 'uint32', name: '_limit', type: 'uint32' }],
+    name: 'setCallbackGasLimit',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
+      { internalType: 'uint64', name: 'requestId', type: 'uint64' },
       {
-        internalType: 'address',
-        name: '',
+        internalType: 'contract ICircuitValidator',
+        name: 'validator',
         type: 'address',
       },
+      { internalType: 'uint256', name: 'schema', type: 'uint256' },
+      { internalType: 'uint256', name: 'claimPathKey', type: 'uint256' },
+      { internalType: 'uint256', name: 'operator', type: 'uint256' },
+      { internalType: 'uint256[]', name: 'value', type: 'uint256[]' },
     ],
-    name: 'verifyMerchants',
-    outputs: [
+    name: 'setZKPRequest',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint64', name: 'requestId', type: 'uint64' },
       {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
+        internalType: 'contract ICircuitValidator',
+        name: 'validator',
+        type: 'address',
       },
+      { internalType: 'uint256', name: 'schema', type: 'uint256' },
+      { internalType: 'uint256', name: 'claimPathKey', type: 'uint256' },
+      { internalType: 'uint256', name: 'operator', type: 'uint256' },
+      { internalType: 'uint256[]', name: 'value', type: 'uint256[]' },
+      { internalType: 'uint256', name: 'queryHash', type: 'uint256' },
     ],
+    name: 'setZKPRequestRaw',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint64', name: 'requestId', type: 'uint64' },
+      { internalType: 'uint256[]', name: 'inputs', type: 'uint256[]' },
+      { internalType: 'uint256[2]', name: 'a', type: 'uint256[2]' },
+      { internalType: 'uint256[2][2]', name: 'b', type: 'uint256[2][2]' },
+      { internalType: 'uint256[2]', name: 'c', type: 'uint256[2]' },
+    ],
+    name: 'submitZKPResponse',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'superInterface',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'zkpAddressToId',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'zkpIdToAddress',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
 ];
-
 const contract = {
   address,
   abi,
