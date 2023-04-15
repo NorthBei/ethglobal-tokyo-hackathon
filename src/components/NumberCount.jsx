@@ -14,7 +14,8 @@ function NumberCount({ value, max = 10, onChange }) {
           background: 'rgb(41, 66, 237)',
         }}
         onClick={() => {
-          onChange(value > 1 ? value - 1 : 1);
+          if (value <= 0) onChange(1);
+          else onChange(value > 1 ? value - 1 : 1);
         }}
       >
         -
@@ -42,7 +43,8 @@ function NumberCount({ value, max = 10, onChange }) {
           background: 'rgb(41, 66, 237)',
         }}
         onClick={() => {
-          onChange(value < 10 ? value + 1 : max);
+          if (value <= 0) onChange(1);
+          else onChange(value <= 10 ? value + 1 : max);
         }}
       >
         +
