@@ -7,7 +7,9 @@
   - Front End: https://github.com/NorthBei/ethglobal-tokyo-hackathon
   - Back End: https://github.com/polydraw-ethglobal/backend
   - Smart Contract: https://github.com/polydraw-ethglobal/smart-contract
-- **Public URL**: https://ethglobal.com/showcase/polydraw-h8ga9
+- **Public URL**: 
+  - ETHGlobal showcase: https://ethglobal.com/showcase/polydraw-h8ga9
+  - Live Demo: https://polydraw.netlify.app
 
 
 ## Development
