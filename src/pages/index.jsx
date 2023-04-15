@@ -1,11 +1,21 @@
-import { Col, Row } from 'antd';
+import { Space, Typography } from 'antd';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import gamesImg from '../../public/assets/images/cat.png';
 
-function List({ data }) {
+const { Text } = Typography;
+
+function Games() {
+  const gameList = [
+    { name: 'Collection 1', id: '100001', price: 1000 },
+    { name: 'Collection 2', id: '100002', price: 1000 },
+    { name: 'Collection 3', id: '100003', price: 1000 },
+    { name: 'Collection 4', id: '100004', price: 1000 },
+    { name: 'Collection 5', id: '100005', price: 1000 },
+  ];
+
   return (
     <>
       <Head>
@@ -14,48 +24,82 @@ function List({ data }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {data.map((pack, i) => (
-        <Col span={6} gutter={[12, 12]} className="collection-wrapper" key={i}>
-          <Link href={`/games/${pack.id}`}>
-            <Row justify="center">
-              <Image
-                src={gamesImg}
-                width={150}
-                height={150}
-                alt="games"
-                className="item-img"
-              />
-            </Row>
-            <Row className="type" justify="center">
-              {pack.name}
-            </Row>
-            <Row className="id" justify="center">
-              {pack.id}
-            </Row>
-          </Link>
-        </Col>
-      ))}
+      <main style={{ paddingTop: '100px', paddingBottom: '200px' }}>
+        <Text
+          style={{
+            display: 'inline-block',
+            fontSize: '40px',
+            lineHeight: '48px',
+            fontWeight: '700',
+            marginTop: '26px',
+            marginBottom: '26px',
+            width: '100%',
+          }}
+        >
+          Games
+        </Text>
+
+        <section
+          style={{
+            display: 'grid',
+            gridGap: '20px',
+            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+          }}
+        >
+          {gameList.map((game) => (
+            <Link
+              href={`/games/${game.id}`}
+              key={game.id}
+              style={{ width: '100%' }}
+            >
+              <div
+                style={{
+                  padding: '14px',
+                  width: '285px',
+                  minHeight: '384px',
+                  boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.08)',
+                  display: 'block',
+                  overflow: 'hidden',
+                  boxSizing: 'border-box',
+                  borderRadius: '20px',
+                }}
+              >
+                <Image
+                  src={gamesImg}
+                  width={257}
+                  height={257}
+                  alt="games"
+                  style={{ borderRadius: '12px' }}
+                />
+                <Space direction="vertical" style={{ padding: '14px 6px' }}>
+                  <Text
+                    style={{
+                      lineHeight: '20px',
+                      fontSize: '16px',
+                      whiteSpace: 'nowrap',
+                      fontWeight: '700',
+                    }}
+                  >
+                    {game.name}
+                  </Text>
+                  <Text
+                    style={{
+                      lineHeight: '20px',
+                      fontSize: '16px',
+                      whiteSpace: 'nowrap',
+                      fontWeight: '700',
+                      marginTop: '2px',
+                    }}
+                  >
+                    {game.price} Matic
+                  </Text>
+                </Space>
+              </div>
+            </Link>
+          ))}
+        </section>
+      </main>
     </>
-  );
-}
-
-function Games() {
-  const gamesData = [
-    { name: 'Collection 1', id: '100001' },
-    { name: 'Collection 2', id: '100002' },
-    { name: 'Collection 3', id: '100003' },
-    { name: 'Collection 4', id: '100004' },
-    { name: 'Collection 5', id: '100005' },
-  ];
-
-  return (
-    <section className="account">
-      <div className="content">
-        <Row justify="space-between" gutter={{ md: 16, sm: 8 }}>
-          <List data={gamesData} />
-        </Row>
-      </div>
-    </section>
   );
 }
 
