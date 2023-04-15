@@ -1,36 +1,75 @@
 import { Col, Row, Typography } from 'antd';
 import Image from 'next/image';
 
-import styles from '../styles/Game.module.css';
-
 const { Text } = Typography;
 
-function PrizeList({ data }) {
+function PrizeList({ prizeList }) {
   return (
     <>
-      {data.map((pack, i) => (
-        <Col span={24} className="item-block" key={i}>
-          <Row gutter={[20, 12]} justify="space-between" align="middle">
-            <Col span={12}>
-              <div className={styles['item-img-wrapper']}>
-                <Image src={pack.img} width={150} height={150} alt="item" />
-              </div>
-            </Col>
-            <Col span={12}>
-              <Row>
-                <Col span={24} className="type">
-                  <Text>{pack.type}</Text>
-                </Col>
-                <Col span={24} className="name">
-                  <Text>{pack.name}</Text>
-                </Col>
-                <Col span={24} className="id">
-                  <Text>{pack.id}</Text>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Col>
+      {prizeList.map((prize, i) => (
+        <div
+          style={{
+            display: 'flex',
+            borderRadius: '20px',
+            padding: '40px',
+            WebkitBoxPack: 'justify',
+            justifyContent: 'space-between',
+            background: 'white',
+            boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.08)',
+            marginTop: '20px',
+          }}
+          key={i}
+        >
+          <Image
+            src={prize.img}
+            width={200}
+            height={200}
+            alt="item"
+            style={{ borderRadius: '12px' }}
+          />
+          <div style={{ flex: '1', paddingLeft: '40px' }}>
+            <Row>
+              <Col span={24}>
+                <Text
+                  style={{
+                    lineHeight: '30px',
+                    fontSize: '36px',
+                    whiteSpace: 'nowrap',
+                    fontWeight: '700',
+                  }}
+                >
+                  {prize.type} Prize
+                </Text>
+              </Col>
+              <div style={{ height: '20px', width: '100%' }} />
+              <Col span={24}>
+                <Text
+                  style={{
+                    lineHeight: '20px',
+                    fontSize: '16px',
+                    whiteSpace: 'nowrap',
+                    fontWeight: '700',
+                  }}
+                >
+                  {prize.name}
+                </Text>
+              </Col>
+              <div style={{ height: '10px', width: '100%' }} />
+              <Col span={24}>
+                <Text
+                  style={{
+                    lineHeight: '20px',
+                    fontSize: '16px',
+                    whiteSpace: 'nowrap',
+                    fontWeight: '700',
+                  }}
+                >
+                  {prize.remainAmount} remaining
+                </Text>
+              </Col>
+            </Row>
+          </div>
+        </div>
       ))}
     </>
   );
