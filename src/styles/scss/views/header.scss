@@ -4,10 +4,6 @@
   h1 {
     @include titleFont(24);
   }
-  .ant-row {
-    height: inherit;
-    padding-inline: 5%;
-  }
   .logo-img {
     width: 150px;
   }
@@ -16,8 +12,8 @@
   }
   .profile {
     position: relative;
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     overflow: hidden;
     background-color: #c4c4c4;

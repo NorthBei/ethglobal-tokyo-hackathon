@@ -1,6 +1,6 @@
 import { CodeSandboxOutlined } from '@ant-design/icons';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Col, Drawer, Grid, Layout, Row } from 'antd';
+import { Col, Drawer, Grid, Layout, Row, Space } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -11,7 +11,7 @@ import defaultProfile from '../../public/assets/images/default-profile.webp';
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
 
-function HeaderComponent() {
+function HeaderComponent({ style }) {
   const [sideBarIsOpen, setSideBarIsOpen] = useState(false);
 
   const screens = useBreakpoint();
@@ -21,56 +21,56 @@ function HeaderComponent() {
   const { data: ensAvatar } = useEnsAvatar({ address });
 
   return (
-    <Header className="header">
-      <Row justify="space-between" align="middle" className="normal-row">
-        <Col>
-          <Link href="/">
-            <h1>PolyDraw</h1>
-          </Link>
-        </Col>
-        {/* 搜尋 */}
+    <Header
+      className="header"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        width: '100%',
+      }}
+    >
+      <div style={style}>
+        <Row justify="space-between" align="middle" className="normal-row">
+          <Col>
+            <Link href="/">
+              <h1>PolyDraw</h1>
+            </Link>
+          </Col>
 
-        <Col xl={15} md={15}>
-          {screens.sm ? (
-            <Row justify="end" align="middle" className="navbar-area">
-              <Col className="mr-30">
-                <Link href="/about">
-                  <span>Upload</span>
-                </Link>
-              </Col>
-              <Col className="mr-30">
-                {/* <Button type="primary" size="middle" shape="round">
-                    Connect wallet
-                  </Button> */}
-                <ConnectButton label="Sign in" accountStatus="address" />
-              </Col>
-              <Col>
-                <Link href="/account">
-                  <div className="profile">
-                    <Image
-                      src={ensAvatar || defaultProfile}
-                      alt=""
-                      className="profile-img"
-                    />
-                  </div>
-                </Link>
-              </Col>
-            </Row>
-          ) : (
-            <Row justify="end" align="middle">
-              <CodeSandboxOutlined
-                className="sandwich"
-                onClick={() => setSideBarIsOpen(!sideBarIsOpen)}
-              />
-            </Row>
-          )}
-        </Col>
-      </Row>
-      {!screens.sm ? (
-        <Row justify="end" align="middle">
-          <ConnectButton label="Sign in" accountStatus="address" />
+          <Col style={{ flex: '1' }}>
+            {screens.sm ? (
+              <Row justify="end">
+                <Space size={20}>
+                  <Link href="/upload">Create</Link>
+                  <ConnectButton label="Sign in" accountStatus="address" />
+                  <Link href="/account">
+                    <div className="profile">
+                      <Image
+                        src={ensAvatar || defaultProfile}
+                        alt="profile"
+                        className="profile-img"
+                      />
+                    </div>
+                  </Link>
+                </Space>
+              </Row>
+            ) : (
+              <Row justify="end" align="middle">
+                {!screens.sm && (
+                  <Row justify="end" align="middle">
+                    <ConnectButton label="Sign in" accountStatus="address" />
+                  </Row>
+                )}
+                <CodeSandboxOutlined
+                  className="sandwich"
+                  onClick={() => setSideBarIsOpen(!sideBarIsOpen)}
+                />
+              </Row>
+            )}
+          </Col>
         </Row>
-      ) : null}
+      </div>
       <Drawer
         placement="right"
         closable={false}
