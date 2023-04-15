@@ -29,7 +29,7 @@ function Redeem() {
       return null;
     }
     return userNonce.data + 1;
-  }, [userNonce]);
+  }, [userNonce.data]);
 
   const { config, error } = usePrepareContractWrite({
     address: ichiban.address,
@@ -66,10 +66,6 @@ function Redeem() {
         >
           Redeem
         </Button>
-        <div>{`${error}`}</div>
-        <div>{`config ${config}`}</div>
-        <div>{`${gameId} ${prizeType} ${prizeOwner} ${expireTime} ${signature}`}</div>
-        <div>{`isSuccess ${isSuccess}`}</div>
       </Row>
     </section>
   );
