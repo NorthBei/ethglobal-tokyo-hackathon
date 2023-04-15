@@ -11,6 +11,8 @@ import ichiban from '../contracts/ichiban';
 
 const { Text } = Typography;
 
+// ameId=0&prizeType=0&prizeOwner=0x888889A700760c85244E945F09ae7ea185155d07&expireTime=123456789&signature=0xe12d8b7eb3285ffb4019fddcb8662cf472db69d46de56e94b2802166668274ef717bdbd37119f0f3cf339b67dff2bca24d9479260db26a59d7bc35bf999af5191c
+
 function Redeem() {
   const router = useRouter();
   const { gameId, prizeType, prizeOwner, expireTime, signature } = router.query;
@@ -64,6 +66,8 @@ function Redeem() {
         >
           Redeem
         </Button>
+        <div>{`${error}`}</div>
+        <div>{`isSuccess ${isSuccess}`}</div>
       </Row>
     </section>
   );
