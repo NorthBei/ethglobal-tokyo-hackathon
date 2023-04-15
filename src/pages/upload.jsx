@@ -18,6 +18,7 @@ import {
   Tabs,
   Typography,
 } from 'antd';
+import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -89,7 +90,7 @@ export default function Upload() {
     args: [address, 1],
     onSuccess(isVendor) {
       setIsUserVendor(isVendor);
-      if (!isVendor) {
+      if (process.env.NODE_ENV === 'production' && !isVendor) {
         alert('Please become vendor first');
         router.push('/vc');
       }
@@ -207,7 +208,9 @@ export default function Upload() {
       // _prizeInfo
       formData.prizeContents.map((item) => item.thumbnailCid),
       // _price
-      formData.drawingPrice,
+      BigNumber.from(formData.drawingPrice)
+        .mul(BigNumber.from('1000000000000000000'))
+        .toString(),
       // _gameCover
       formData.package.thumbnailCid,
     ],
@@ -226,7 +229,7 @@ export default function Upload() {
     }
   }, [isSuccess]);
 
-  if (!isUserVendor) return null;
+  if (process.env.NODE_ENV === 'production' && !isUserVendor) return null;
 
   return (
     <main className={styles.main}>
@@ -349,9 +352,9 @@ export default function Upload() {
                     return (
                       <InputNumber
                         {...field}
-                        min={1}
+                        min={0.0000001}
                         max={9999999}
-                        addonAfter="wei"
+                        addonAfter="Matic"
                       />
                     );
                   }}
