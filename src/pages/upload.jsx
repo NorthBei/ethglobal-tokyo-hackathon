@@ -10,6 +10,7 @@ import {
   Form,
   Input,
   InputNumber,
+  notification,
   Radio,
   Row,
   Slider,
@@ -20,7 +21,7 @@ import {
 } from 'antd';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
   useAccount,
@@ -77,12 +78,23 @@ const steps = [
 
 export default function Upload() {
   const [step, setStep] = useState(0);
-  const [isUserVendor, setIsUserVendor] = useState(false);
-
+  const [isUserVendor, setIsUserVendor] = useState(null);
+  const [api, contextHolder] = notification.useNotification();
   const router = useRouter();
 
   const { address } = useAccount();
-
+  const openNotification = useCallback(
+    ({ type, onClose, title, desc }) => {
+      api[type]({
+        message: title,
+        description: desc,
+        duration: 4,
+        placement: 'bottomRight',
+        onClose: () => onClose(),
+      });
+    },
+    [api]
+  );
   useContractRead({
     address: ichiban.address,
     abi: ichiban.abi,
@@ -90,9 +102,21 @@ export default function Upload() {
     args: [address, 1],
     onSuccess(isVendor) {
       setIsUserVendor(isVendor);
+      if (!isVendor) {
+        openNotification({
+          type: 'warning',
+          title: 'Not Eligable',
+          desc: 'Please become vendor first',
+          onClose: () => router.push('/vc'),
+        });
+      }
       if (process.env.NODE_ENV === 'production' && !isVendor) {
-        alert('Please become vendor first');
-        router.push('/vc');
+        openNotification({
+          type: 'warning',
+          title: 'Not Eligable',
+          desc: 'Please become vendor first',
+          onClose: () => router.push('/vc'),
+        });
       }
     },
   });
@@ -224,15 +248,22 @@ export default function Upload() {
 
   useEffect(() => {
     if (isSuccess) {
-      alert('Success!');
+      openNotification({
+        type: 'success',
+        title: 'Success',
+        desc: 'People now can join your game!',
+      });
       window.location.reload();
     }
-  }, [isSuccess]);
+  }, [isSuccess, openNotification]);
 
-  if (process.env.NODE_ENV === 'production' && !isUserVendor) return null;
+  // if (process.env.NODE_ENV === 'production' && !isUserVendor) return null;
 
-  return (
+  return !isUserVendor ? (
+    <main className={styles.main}>{contextHolder}</main>
+  ) : (
     <main className={styles.main}>
+      {contextHolder}
       <Form
         form={form}
         layout="vertical"
