@@ -1,6 +1,8 @@
-import { Button, Col, Row, Space, Typography } from 'antd';
+import { Button, Col, Row, Space, Tag, Typography } from 'antd';
+import axios from 'axios';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi';
 
 // import { shortenAddress } from '@/utils/shortenAddress';
@@ -11,46 +13,53 @@ const { Text } = Typography;
 
 function List({ type, data }) {
   return (
-    <>
-      {data.map((pack, i) => (
-        <Col span={24} className="item-block" key={`col-${i}`}>
-          <Row gutter={[16, 12]}>
-            {pack.map((item, j) => (
-              <Col span={24} key={j}>
-                <Row gutter={[20, 12]} justify="space-between" align="middle">
-                  <Col span={5}>
-                    <div className="item-img-wrapper">
-                      <Image src={productImg} alt="" className="item-img" />
-                    </div>
-                  </Col>
-                  <Col span={4} className="prize">
-                    {item.type}
-                  </Col>
-                  <Col span={6} className="id">
-                    {item.id}
-                  </Col>
-                  <Col span={6}>
-                    {pack.length === j + 1 ? (
-                      <Button type="primary" shape="round" size="middle">
-                        {type === 'prizes' ? 'Claim' : 'Details'}
-                      </Button>
-                    ) : (
-                      ''
-                    )}
-                  </Col>
-                </Row>
+    <Col span={24} className="item-block">
+      <Row gutter={[16, 12]}>
+        {data.map((item, j) => (
+          <Col span={24} key={j}>
+            <Row gutter={[20, 12]} justify="space-between" align="middle">
+              <Col span={5}>
+                <div className="item-img-wrapper">
+                  <Image src={productImg} alt="" className="item-img" />
+                </div>
               </Col>
-            ))}
-          </Row>
-        </Col>
-      ))}
-    </>
+              <Col span={4} className="prize">
+                {item.id}
+              </Col>
+              <Col span={6} className="id">
+                {item.ipfs}
+              </Col>
+              <Col span={6}>
+                <Button type="primary" shape="round" size="middle">
+                  {type === 'prizes' ? 'Claim' : 'Details'}
+                </Button>
+              </Col>
+            </Row>
+          </Col>
+        ))}
+      </Row>
+    </Col>
   );
 }
 
+const fetcher = async (url, address, status) => {
+  try {
+    if (!address) return;
+    const res = await axios.get(
+      `http://35.243.96.89:9001/app/game/player/prize?address=${`0xB926660866633fe4D83E94Dd09E9e775999722b4`}&status=${
+        status === 'prizes' ? 'ENABLE' : 'DISABLE'
+      }`
+    );
+    if (res.data.code === 'G_0000') return res.data.data;
+  } catch (err) {
+    return err;
+  }
+};
+
 function Account() {
   const [type, setType] = useState('prizes'); // prizes / collected
-
+  const [selectedGameId, setSelectedGameId] = useState('');
+  console.log({ selectedGameId });
   const prizeData = [
     [
       { type: 'A', id: '1240123123123' },
@@ -81,6 +90,18 @@ function Account() {
   const { address } = useAccount();
   const { data: ensAvatar } = useEnsAvatar({ address });
   const { data: ensName } = useEnsName({ address });
+
+  const { data: gameList, mutate: gameListMutate } = useSWR(
+    ['PlayerGameList', address, type],
+    ([url, addr, tabType]) => fetcher(url, addr, tabType)
+  );
+  console.log(gameList);
+  useEffect(() => {
+    if (!gameList) return;
+    if (selectedGameId) return;
+    console.log(gameList.gameMap[0].gameId);
+    setSelectedGameId(`${gameList.gameMap[0].gameId}`);
+  }, [gameList]);
 
   return (
     <section className="account">
@@ -118,19 +139,33 @@ function Account() {
           </Col>
           {/* 列表 */}
           <Col span={13}>
-            <Row gutter={[24, 15]}>
-              <Space size={[12, 8]} wrap>
-                <Button>Game 1</Button>
-                <Button>Game 2</Button>
-                <Button>Game 3</Button>
-                <Button>Game 4</Button>
-                <Button>Game 5</Button>
-                <Button>Game 6</Button>
-              </Space>
-            </Row>
-            <Row gutter={[24, 15]} className="list-area">
-              {type === 'prizes' && <List type={type} data={prizeData} />}
-              {type === 'collected' && <List type={type} data={collectData} />}
+            <Row gutter={[24, 24]}>
+              <Col span={24}>
+                {gameList ? (
+                  <Space size={[12, 8]} wrap>
+                    {Object.entries(gameList.gameMap).map((gameArr) => (
+                      <Tag
+                        key={gameArr[1].gameId}
+                        onClick={() => setSelectedGameId(gameArr[1].gameId)}
+                      >
+                        {gameArr[1].title}
+                      </Tag>
+                    ))}
+                  </Space>
+                ) : (
+                  ''
+                )}
+              </Col>
+              <Col span={24} className="list-area">
+                {`${selectedGameId}` && gameList ? (
+                  <List
+                    type={type}
+                    data={gameList.playerGameMap[selectedGameId]}
+                  />
+                ) : (
+                  ''
+                )}
+              </Col>
             </Row>
           </Col>
           {/* 頁籤 */}
