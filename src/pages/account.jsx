@@ -125,11 +125,8 @@ function List({ type, listTitle, data, onPrizeClaim }) {
                     />
                   </div>
                 </Col>
-                <Col span={4} className="prize">
+                <Col span={10} className="prize">
                   {`${String.fromCharCode(prize.id + 65)} prize`}
-                </Col>
-                <Col span={6} className="id">
-                  <Text> {prize.ipfs}</Text>
                 </Col>
                 <Col span={6}>
                   <Button
@@ -206,7 +203,8 @@ function Account() {
           <Col span={14}>
             <Row gutter={[24, 24]}>
               <Col span={24} className="list-area">
-                {gameList ? (
+                {gameList &&
+                Object.values(gameList.playerGameMap)[0].length !== 0 ? (
                   <>
                     {Object.entries(gameList.playerGameMap).map((game) => (
                       <List
