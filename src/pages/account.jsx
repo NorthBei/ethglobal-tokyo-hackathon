@@ -238,6 +238,7 @@ function Account() {
                   className={type === 'prizes' ? 'active' : ''}
                   onClick={() => {
                     setType('prizes');
+                    setSelectedGameId(null);
                   }}
                 >
                   Prizes
@@ -250,6 +251,7 @@ function Account() {
                   className={type === 'collected' ? 'active' : ''}
                   onClick={() => {
                     setType('collected');
+                    setSelectedGameId(null);
                   }}
                 >
                   Collected
