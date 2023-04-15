@@ -177,11 +177,6 @@ function Account() {
     ([url, addr, tabType]) => fetcher(url, addr, tabType)
   );
 
-  useEffect(() => {
-    if (!gameList && selectedGameId === null) return;
-    setSelectedGameId(`${gameList.gameMap[0].gameId}`);
-  }, [gameList, selectedGameId]);
-
   return (
     <section className="account">
       <div className="content">
