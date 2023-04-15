@@ -44,7 +44,6 @@ $height-footer: 152px;
   .ant-layout-content {
     // Content
     position: relative;
-    overflow: hidden;
     z-index: 1;
     @include background_color('bg-color-primary');
     width: 100%;

@@ -16,14 +16,20 @@ import {
   Space,
   Steps,
   Tabs,
+  Typography,
 } from 'antd';
 import { useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
+import GameDetail from '../components/GameDetail';
 import PhotoUpload from '../components/PhotoUpload';
+import ichiban from '../contracts/ichiban';
 import styles from '../styles/Home.module.css';
+import cidToImageUrl from '../utils/cidToImageUrl';
 
 const { TextArea } = Input;
+const { Text } = Typography;
 
 const marks = {
   0: 'A',
@@ -38,6 +44,29 @@ const marks = {
   90: 'J',
   100: 'K',
 };
+
+const steps = [
+  {
+    title: 'Step 1',
+    description: 'Prize type for sale',
+  },
+  {
+    title: 'Step 2',
+    description: 'Package info',
+  },
+  {
+    title: 'Step 3',
+    description: 'Upload your prizes',
+  },
+  {
+    title: 'Step 4',
+    description: 'Set up drawing price',
+  },
+  {
+    title: 'Step 5',
+    description: 'Confirmation',
+  },
+];
 
 export default function Home() {
   const [step, setStep] = useState(0);
@@ -133,8 +162,34 @@ export default function Home() {
     return tabs;
   }, [control, setValue, formData.prizeGradesRange, formData.prizeContents]);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const { config, error } = usePrepareContractWrite({
+    address: ichiban.address,
+    abi: ichiban.abi,
+    functionName: 'listPhysicalPrizeGame',
+    args: [
+      // _numPrizeTypes
+      Math.floor(formData.prizeGradesRange / 10) + 1,
+      // _totalItems
+      formData.prizeContents.reduce((total, item) => {
+        return total + item.amount;
+      }, 0),
+      // _prizeCount
+      formData.prizeContents.map((item) => item.amount),
+      // _prizeInfo
+      formData.prizeContents.map((item) => item.thumbnailCid),
+      // _price
+      formData.drawingPrice,
+    ],
+  });
+
+  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+
+  console.log('error', error);
+  console.log(data, isLoading, isSuccess);
+
+  const onSubmit = (values) => {
+    console.log(values);
+    if (write) write();
   };
 
   return (
@@ -147,8 +202,21 @@ export default function Home() {
         onFinish={handleSubmit(onSubmit)}
       >
         <DevTool control={control} />
-        <Row gutter={16}>
-          <Col span={12}>
+        <Row gutter={32} justify="space-between">
+          <Col style={{ flex: '1' }}>
+            <Text
+              style={{
+                display: 'inline-block',
+                fontSize: '40px',
+                lineHeight: '48px',
+                fontWeight: '700',
+                marginTop: '26px',
+                marginBottom: '26px',
+                width: '100%',
+              }}
+            >
+              {steps[step].description}
+            </Text>
             {step === 0 && (
               <Form.Item label="Select Prize type for sale" required>
                 <Controller
@@ -240,10 +308,35 @@ export default function Home() {
                   control={control}
                   name="drawingPrice"
                   render={({ field }) => {
-                    return <InputNumber {...field} min={1} max={9999999} />;
+                    return (
+                      <InputNumber
+                        {...field}
+                        min={1}
+                        max={9999999}
+                        addonAfter="wei"
+                      />
+                    );
                   }}
                 />
               </Form.Item>
+            )}
+
+            {step === 4 && (
+              <GameDetail
+                img={cidToImageUrl(formData.package.thumbnailCid)}
+                title={formData.package.title}
+                desc={formData.package.description}
+                price={formData.drawingPrice}
+                prizeList={formData.prizeContents.map((item, index) => {
+                  return {
+                    img: cidToImageUrl(item.thumbnailCid),
+                    name: item.name,
+                    type: marks[index * 10],
+                    remainAmount: item.amount,
+                  };
+                })}
+                isShowNumberCount={false}
+              />
             )}
             <div
               style={{
@@ -251,6 +344,7 @@ export default function Home() {
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
+                marginTop: '26px',
               }}
             >
               <Space>
@@ -268,42 +362,26 @@ export default function Home() {
                 )}
                 {step === 4 && (
                   <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                      Upload
+                    <Button type="primary" htmlType="submit" disabled={!write}>
+                      Create
                     </Button>
                   </Form.Item>
                 )}
               </Space>
             </div>
           </Col>
-          <Col span={4} />
-          <Col span={8}>
-            <Steps
-              direction="vertical"
-              current={step}
-              items={[
-                {
-                  title: 'Step 1',
-                  description: 'Prize type for sale',
-                },
-                {
-                  title: 'Step 2',
-                  description: 'Package info',
-                },
-                {
-                  title: 'Step 3',
-                  description: 'Upload your prizes',
-                },
-                {
-                  title: 'Step 4',
-                  description: 'Set up drawing price',
-                },
-                {
-                  title: 'Step 5',
-                  description: 'Confirmation',
-                },
-              ]}
-            />
+          <Col
+            style={{
+              ...(step === 4
+                ? {
+                    position: 'absolute',
+                    right: '0',
+                    transform: 'translateX(100%)',
+                  }
+                : {}),
+            }}
+          >
+            <Steps direction="vertical" current={step} items={steps} />
           </Col>
         </Row>
       </Form>
