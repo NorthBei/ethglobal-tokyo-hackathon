@@ -67,6 +67,8 @@ function Redeem() {
           Redeem
         </Button>
         <div>{`${error}`}</div>
+        <div>{`config ${config}`}</div>
+        <div>{`${gameId} ${prizeType} ${prizeOwner} ${expireTime} ${signature}`}</div>
         <div>{`isSuccess ${isSuccess}`}</div>
       </Row>
     </section>
