@@ -1,12 +1,10 @@
-import { CodeSandboxOutlined } from '@ant-design/icons';
+import { CodeSandboxOutlined, UserOutlined } from '@ant-design/icons';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Col, Drawer, Grid, Layout, Row, Space } from 'antd';
+import { Avatar, Col, Drawer, Grid, Layout, Row, Space } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useAccount, useEnsAvatar } from 'wagmi';
-
-import defaultProfile from '../../public/assets/images/default-profile.webp';
 
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
@@ -46,12 +44,17 @@ function HeaderComponent({ style }) {
                   <Link href="/upload">Create Game</Link>
                   <ConnectButton label="Sign in" accountStatus="address" />
                   <Link href="/account">
-                    <div className="profile">
-                      <Image
-                        src={ensAvatar || defaultProfile}
-                        alt="profile"
-                        className="profile-img"
-                      />
+                    <div className="profile" style={{ borderRadius: '50%' }}>
+                      {ensAvatar ? (
+                        <Image
+                          src={ensAvatar}
+                          alt="profile"
+                          width={35}
+                          height={35}
+                        />
+                      ) : (
+                        <Avatar size={35} icon={<UserOutlined />} />
+                      )}
                     </div>
                   </Link>
                 </Space>

@@ -1,4 +1,19 @@
-import { Button, Col, Modal, QRCode, Row, Space, Typography } from 'antd';
+import {
+  CrownOutlined,
+  DatabaseOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import {
+  Avatar,
+  Button,
+  Col,
+  Menu,
+  Modal,
+  QRCode,
+  Row,
+  Space,
+  Typography,
+} from 'antd';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import Image from 'next/image';
@@ -12,7 +27,6 @@ import {
   useSignMessage,
 } from 'wagmi';
 
-import defaultProfile from '../../public/assets/images/default-profile.webp';
 import ichiban from '../contracts/ichiban';
 import cidToImageUrl from '../utils/cidToImageUrl';
 
@@ -112,43 +126,68 @@ function ClaimModal({ isOpen, onClose, gameId, prize }) {
 function List({ type, listTitle, data, onPrizeClaim }) {
   return (
     <>
-      <Text style={{ fontSize: '24px' }}>{listTitle}</Text>
-      <Col span={24} className="item-block">
-        <Row gutter={[16, 12]}>
-          {data.map((prize, j) => (
-            <Col span={24} key={j}>
-              <Row gutter={[20, 12]} justify="space-between" align="middle">
-                <Col span={5}>
-                  <div className="item-img-wrapper">
-                    <Image
-                      src={cidToImageUrl(prize.ipfs)}
-                      alt=""
-                      height={100}
-                      width={100}
-                    />
-                  </div>
-                </Col>
-                <Col span={10} className="prize">
-                  {`${String.fromCharCode(prize.id + 65)} prize`}
-                </Col>
-                <Col span={6}>
-                  <Button
-                    type="primary"
-                    shape="round"
-                    size="middle"
-                    onClick={() => {
-                      if (type === 'prizes' && onPrizeClaim)
-                        onPrizeClaim(prize);
-                    }}
-                  >
-                    {type === 'prizes' ? 'Claim' : 'Details'}
-                  </Button>
-                </Col>
-              </Row>
+      <Text
+        style={{
+          display: 'inline-block',
+          fontSize: '24px',
+          marginBottom: '12px',
+        }}
+      >
+        {listTitle}
+      </Text>
+
+      <Space
+        direction="vertical"
+        size="small"
+        className="item-block"
+        style={{
+          width: '100%',
+        }}
+      >
+        {data.map((prize, j) => (
+          <Row
+            justify="space-between"
+            align="middle"
+            key={j}
+            style={{
+              width: '100%',
+              backgroundColor: '#ffffff',
+              boxShadow: 'rgba(0, 0, 0, 0.08) 0px 10px 30px',
+              borderRadius: '20px',
+              padding: '10px',
+            }}
+          >
+            <Col>
+              <div className="item-img-wrapper">
+                <Image
+                  src={cidToImageUrl(prize.ipfs)}
+                  alt=""
+                  height={100}
+                  width={100}
+                />
+              </div>
             </Col>
-          ))}
-        </Row>
-      </Col>
+            <Col
+              className="prize"
+              style={{ flex: '1', marginLeft: '20px', marginRight: '20px' }}
+            >
+              {`${String.fromCharCode(prize.id + 65)} prize`}
+            </Col>
+            <Col>
+              <Button
+                type="primary"
+                shape="round"
+                size="middle"
+                onClick={() => {
+                  if (type === 'prizes' && onPrizeClaim) onPrizeClaim(prize);
+                }}
+              >
+                {type === 'prizes' ? 'Claim' : 'Details'}
+              </Button>
+            </Col>
+          </Row>
+        ))}
+      </Space>
     </>
   );
 }
@@ -185,26 +224,30 @@ function Account() {
       <div className="content">
         <Row justify="space-between" gutter={32}>
           {/* 個人資訊 */}
-          <Col span={5} className="content__info">
-            <Row gutter={[16, 16]} style={{ position: 'sticky', top: '80px' }}>
+          <Col span={6} className="content__info">
+            <Row gutter={[16, 16]} style={{ position: 'sticky', top: '100px' }}>
               <Col span={24} className="profile-wrapper">
                 <div className="profile">
-                  <Image src={ensAvatar || defaultProfile} alt="" />
+                  {ensAvatar ? (
+                    <Image src={ensAvatar} alt="user avatar" />
+                  ) : (
+                    <Avatar size={64} icon={<UserOutlined />} />
+                  )}
                 </div>
               </Col>
               <Col span={24}>
-                <Text className="name">{ensName || address}</Text>
+                <Text>{ensName || address}</Text>
               </Col>
             </Row>
           </Col>
           {/* 列表 */}
-          <Col span={14}>
+          <Col span={12}>
             <Row gutter={[24, 24]}>
               <Col span={24} className="list-area">
                 {gameList &&
                 Object.values(gameList.playerGameMap)[0] &&
                 Object.values(gameList.playerGameMap)[0].length !== 0 ? (
-                  <>
+                  <Space direction="vertical" size="large">
                     {Object.entries(gameList.playerGameMap).map((game) => (
                       <List
                         key={game[0]}
@@ -218,7 +261,7 @@ function Account() {
                         }}
                       />
                     ))}
-                  </>
+                  </Space>
                 ) : (
                   ''
                 )}
@@ -226,35 +269,27 @@ function Account() {
             </Row>
           </Col>
           {/* 頁籤 */}
-          <Col sm={4} className="cate-area">
-            <Row gutter={[36, 36]} style={{ position: 'sticky', top: '80px' }}>
-              <Col span={24}>
-                <Button
-                  type="text"
-                  shape="round"
-                  className={type === 'prizes' ? 'active' : ''}
-                  onClick={() => {
-                    setType('prizes');
-                    setSelectedGameId(null);
-                  }}
-                >
-                  Prizes
-                </Button>
-              </Col>
-              <Col span={24}>
-                <Button
-                  type="text"
-                  shape="round"
-                  className={type === 'collected' ? 'active' : ''}
-                  onClick={() => {
-                    setType('collected');
-                    setSelectedGameId(null);
-                  }}
-                >
-                  Collected
-                </Button>
-              </Col>
-            </Row>
+          <Col sm={6}>
+            <Menu
+              onClick={(menu) => {
+                setType(menu.key);
+                setSelectedGameId(null);
+              }}
+              style={{ position: 'sticky', top: '100px', width: '256px' }}
+              mode="vertical"
+              items={[
+                {
+                  key: 'prizes',
+                  icon: <CrownOutlined />,
+                  label: 'Prizes',
+                },
+                {
+                  key: 'collected',
+                  icon: <DatabaseOutlined />,
+                  label: 'Collected',
+                },
+              ]}
+            />
           </Col>
         </Row>
       </div>

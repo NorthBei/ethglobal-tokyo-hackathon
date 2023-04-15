@@ -12,20 +12,8 @@
   }
   .profile {
     position: relative;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: #c4c4c4;
   }
-  .profile-img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: auto;
-  }
+  
   .navbar-area {
     padding-inline: 0;
     span {

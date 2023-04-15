@@ -1,4 +1,4 @@
-import { Button, Col, Row, Spin, Typography } from 'antd';
+import { Button, Row, Spin, Typography } from 'antd';
 import axios from 'axios';
 import find from 'lodash/find';
 import Image from 'next/image';
@@ -136,11 +136,7 @@ function Result() {
               <Prizes data={prizeData} />
             </div>
           ) : (
-            <Col span={12} offset={6}>
-              <Row justify="center">
-                <Spin size="large" />
-              </Row>
-            </Col>
+            <Spin size="large" />
           )}
           {stage === 1 ? (
             <Link href="/account">

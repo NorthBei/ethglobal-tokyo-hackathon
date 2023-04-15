@@ -46,6 +46,7 @@ function ConfirmModal({
           ? null
           : onCancel()
       }
+      centered
     >
       <Divider />
       <Row gutter={24} justify="center">
