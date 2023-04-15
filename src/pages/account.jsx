@@ -204,6 +204,7 @@ function Account() {
             <Row gutter={[24, 24]}>
               <Col span={24} className="list-area">
                 {gameList &&
+                Object.values(gameList.playerGameMap)[0] &&
                 Object.values(gameList.playerGameMap)[0].length !== 0 ? (
                   <>
                     {Object.entries(gameList.playerGameMap).map((game) => (
