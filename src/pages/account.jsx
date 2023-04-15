@@ -1,21 +1,123 @@
-import { Button, Col, Row, Space, Tag, Typography } from 'antd';
+import { Button, Col, Modal, QRCode, Row, Space, Tag, Typography } from 'antd';
 import axios from 'axios';
+import { ethers } from 'ethers';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { useAccount, useEnsAvatar, useEnsName } from 'wagmi';
+import {
+  useAccount,
+  useContractRead,
+  useEnsAvatar,
+  useEnsName,
+  useSignMessage,
+} from 'wagmi';
 
 // import { shortenAddress } from '@/utils/shortenAddress';
 import defaultProfile from '../../public/assets/images/default-profile.webp';
 import productImg from '../../public/assets/images/product.jpg';
+import ichiban from '../contracts/ichiban';
 
 const { Text } = Typography;
 
-function List({ type, data }) {
+function ClaimModal({ isOpen, onClose, gameId, prize }) {
+  const { address } = useAccount();
+
+  const userNonce = useContractRead({
+    address: ichiban.address,
+    abi: ichiban.abi,
+    functionName: 'getUsedNonces',
+    args: [
+      // player
+      address,
+    ],
+  });
+
+  const expireTime = 123456789;
+  const message = useMemo(() => {
+    if (!userNonce.data) return null;
+
+    const hex = ethers.utils.solidityKeccak256(
+      ['address', 'uint256', 'uint256', 'address', 'uint256', 'uint256'],
+      [
+        ichiban.address,
+        gameId,
+        prize.id,
+        address,
+        userNonce.data + 1,
+        expireTime,
+      ]
+    );
+
+    console.log(
+      JSON.stringify([
+        ichiban.address,
+        gameId,
+        prize.id,
+        address,
+        userNonce.data + 1,
+        expireTime,
+      ])
+    );
+
+    return ethers.utils.arrayify(hex);
+  }, [gameId, prize.id, address, userNonce]);
+
+  const {
+    data: signature,
+    isLoading,
+    signMessage,
+  } = useSignMessage({
+    message,
+  });
+
+  console.log('signature', signature);
+
+  const deepLink = useMemo(() => {
+    if (gameId !== null && prize && address && expireTime && signature) {
+      return `https://metamask.app.link/dapp/polydraw.netlify.app/?gameId=${gameId}&prizeType=${prize.id}&prizeOwner=${address}&expireTime=${expireTime}&signature=${signature}`;
+    }
+    return null;
+  }, [gameId, prize, address, expireTime, signature]);
+
+  return (
+    <Modal
+      title="Claim QRCode"
+      open={isOpen}
+      closable
+      onCancel={onClose}
+      footer={null}
+      centered
+    >
+      <Space direction="vertical" size="middle">
+        <p>Sign to generate claim QRcode</p>
+
+        {deepLink && (
+          <QRCode
+            value={deepLink || '-'}
+            isLoading={isLoading}
+            size={200}
+            style={{ margin: 'auto' }}
+          />
+        )}
+
+        <Button
+          onClick={() => {
+            if (message) signMessage({ message });
+          }}
+          disabled={isLoading}
+        >
+          Sign
+        </Button>
+      </Space>
+    </Modal>
+  );
+}
+
+function List({ type, data, onPrizeClaim }) {
   return (
     <Col span={24} className="item-block">
       <Row gutter={[16, 12]}>
-        {data.map((item, j) => (
+        {data.map((prize, j) => (
           <Col span={24} key={j}>
             <Row gutter={[20, 12]} justify="space-between" align="middle">
               <Col span={5}>
@@ -24,13 +126,20 @@ function List({ type, data }) {
                 </div>
               </Col>
               <Col span={4} className="prize">
-                {item.id}
+                {prize.id}
               </Col>
               <Col span={6} className="id">
-                {item.ipfs}
+                {prize.ipfs}
               </Col>
               <Col span={6}>
-                <Button type="primary" shape="round" size="middle">
+                <Button
+                  type="primary"
+                  shape="round"
+                  size="middle"
+                  onClick={() => {
+                    if (type === 'prizes' && onPrizeClaim) onPrizeClaim(prize);
+                  }}
+                >
                   {type === 'prizes' ? 'Claim' : 'Details'}
                 </Button>
               </Col>
@@ -46,7 +155,7 @@ const fetcher = async (url, address, status) => {
   try {
     if (!address) return;
     const res = await axios.get(
-      `http://35.243.96.89:9001/app/game/player/prize?address=${`0xB926660866633fe4D83E94Dd09E9e775999722b4`}&status=${
+      `http://35.243.96.89:9001/app/game/player/prize?address=${`0xf16aa7e201651e7ead5fdd010a5a14589e220826`}&status=${
         status === 'prizes' ? 'ENABLE' : 'DISABLE'
       }`
     );
@@ -58,50 +167,25 @@ const fetcher = async (url, address, status) => {
 
 function Account() {
   const [type, setType] = useState('prizes'); // prizes / collected
-  const [selectedGameId, setSelectedGameId] = useState('');
-  console.log({ selectedGameId });
-  const prizeData = [
-    [
-      { type: 'A', id: '1240123123123' },
-      { type: 'C', id: '1240123123123' },
-    ],
-    [{ type: 'E', id: '1240123123123' }],
-    [
-      { type: 'G', id: '1240123123123' },
-      { type: 'G', id: '1240123123123' },
-      { type: 'B', id: '1240123123123' },
-    ],
-    [{ type: 'E', id: '1240123123123' }],
-    [
-      { type: 'G', id: '1240123123123' },
-      { type: 'G', id: '1240123123123' },
-      { type: 'B', id: '1240123123123' },
-    ],
-  ];
-
-  const collectData = [
-    [
-      { type: 'A', id: '1240123123123' },
-      { type: 'C', id: '1240123123123' },
-    ],
-    [{ type: 'E', id: '1240123123123' }],
-  ];
+  const [selectedGameId, setSelectedGameId] = useState(null);
+  const [claimPrize, setClaimPrize] = useState(null);
+  const [isClaimModalOpen, setClaimModalOpen] = useState(false);
 
   const { address } = useAccount();
   const { data: ensAvatar } = useEnsAvatar({ address });
   const { data: ensName } = useEnsName({ address });
 
-  const { data: gameList, mutate: gameListMutate } = useSWR(
+  const { data: gameList } = useSWR(
     ['PlayerGameList', address, type],
     ([url, addr, tabType]) => fetcher(url, addr, tabType)
   );
-  console.log(gameList);
+
+  // console.log('gameList', gameList);
+
   useEffect(() => {
-    if (!gameList) return;
-    if (selectedGameId) return;
-    console.log(gameList.gameMap[0].gameId);
+    if (!gameList && selectedGameId === null) return;
     setSelectedGameId(`${gameList.gameMap[0].gameId}`);
-  }, [gameList]);
+  }, [gameList, selectedGameId]);
 
   return (
     <section className="account">
@@ -157,10 +241,14 @@ function Account() {
                 )}
               </Col>
               <Col span={24} className="list-area">
-                {`${selectedGameId}` && gameList ? (
+                {selectedGameId !== null && gameList ? (
                   <List
                     type={type}
                     data={gameList.playerGameMap[selectedGameId]}
+                    onPrizeClaim={(prize) => {
+                      setClaimPrize(prize);
+                      setClaimModalOpen(true);
+                    }}
                   />
                 ) : (
                   ''
@@ -199,6 +287,16 @@ function Account() {
           </Col>
         </Row>
       </div>
+      {selectedGameId !== null && claimPrize && (
+        <ClaimModal
+          isOpen={isClaimModalOpen}
+          onClose={() => {
+            setClaimModalOpen(false);
+          }}
+          gameId={selectedGameId}
+          prize={claimPrize}
+        />
+      )}
     </section>
   );
 }
