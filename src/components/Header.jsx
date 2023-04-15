@@ -42,6 +42,7 @@ function HeaderComponent({ style }) {
             {screens.sm ? (
               <Row justify="end">
                 <Space size={20}>
+                  <Link href="/vc">Become Vendor</Link>
                   <Link href="/upload">Create</Link>
                   <ConnectButton label="Sign in" accountStatus="address" />
                   <Link href="/account">

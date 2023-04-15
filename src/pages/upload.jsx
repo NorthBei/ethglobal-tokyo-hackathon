@@ -18,9 +18,15 @@ import {
   Tabs,
   Typography,
 } from 'antd';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+} from 'wagmi';
 
 import GameDetail from '../components/GameDetail';
 import PhotoUpload from '../components/PhotoUpload';
@@ -70,6 +76,25 @@ const steps = [
 
 export default function Upload() {
   const [step, setStep] = useState(0);
+  const [isUserVendor, setIsUserVendor] = useState(false);
+
+  const router = useRouter();
+
+  const { address } = useAccount();
+
+  useContractRead({
+    address: ichiban.address,
+    abi: ichiban.abi,
+    functionName: 'proofs',
+    args: [address, 1],
+    onSuccess(isVendor) {
+      setIsUserVendor(isVendor);
+      if (!isVendor) {
+        alert('Please become vendor first');
+        router.push('/vc');
+      }
+    },
+  });
 
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
@@ -200,6 +225,8 @@ export default function Upload() {
       window.location.reload();
     }
   }, [isSuccess]);
+
+  if (!isUserVendor) return null;
 
   return (
     <main className={styles.main}>
