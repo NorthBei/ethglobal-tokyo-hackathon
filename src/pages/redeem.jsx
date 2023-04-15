@@ -1,6 +1,6 @@
 import { Button, Row, Typography } from 'antd';
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   useContractRead,
   useContractWrite,
@@ -51,8 +51,14 @@ function Redeem() {
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
   console.log(data, isLoading, isSuccess);
 
+  useEffect(() => {
+    if (!isSuccess) return;
+    alert('Success');
+  }, [isSuccess]);
+
   const redeem = () => {
     if (!nonce) return;
+    if (isLoading) return;
     write();
   };
 
