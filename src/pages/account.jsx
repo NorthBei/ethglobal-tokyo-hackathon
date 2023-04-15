@@ -2,7 +2,7 @@ import { Button, Col, Modal, QRCode, Row, Space, Typography } from 'antd';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import {
   useAccount,

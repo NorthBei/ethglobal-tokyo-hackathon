@@ -17,22 +17,22 @@ function Prizes({ data }) {
   return (
     <>
       {data.map((prize, i) => (
-        <Col span={24} className="item-block" key={i}>
-          <Row gutter={[20, 12]} justify="space-between" align="middle">
-            <Col span={12}>
-              <div className={styles['item-img-wrapper']}>
-                <Image src={prize.img} width={150} height={150} alt="item" />
-              </div>
-            </Col>
-            <Col span={12}>
-              <Row>
-                <Col span={24} className="type">
-                  <Title level={3}>{prize.type} Prize</Title>
-                </Col>
-              </Row>
-            </Col>
+        <Row
+          align="middle"
+          style={{ flexDirection: 'column' }}
+          className="item-block"
+          key={i}
+        >
+          <div
+            className={styles['item-img-wrapper']}
+            style={{ borderRadius: '10px', overflow: 'hidden' }}
+          >
+            <Image src={prize.img} width={150} height={150} alt="item" />
+          </div>
+          <Row align="center" style={{ marginTop: '12px' }}>
+            <Title level={3}>{prize.type} Prize</Title>
           </Row>
-        </Col>
+        </Row>
       ))}
     </>
   );
@@ -114,20 +114,27 @@ function Result() {
   return (
     <section className="account">
       <div className="content">
-        <Row align="middle" gutter={[0, 24]}>
-          <Col span={12} offset={6}>
-            <Row justify="center">
-              <Title level={2} style={{ color: 'black' }}>
-                {stageTexts[stage]}
-              </Title>
-            </Row>
-          </Col>
+        <Row
+          align="middle"
+          justify="center"
+          gutter={[0, 24]}
+          style={{ flexDirection: 'column' }}
+        >
+          <Title level={2} style={{ color: 'black' }}>
+            {stageTexts[stage]}
+          </Title>
           {stage === 1 ? (
-            <Col span={12} offset={6}>
-              <Row justify="center">
-                <Prizes data={prizeData} />
-              </Row>
-            </Col>
+            <div
+              style={{
+                display: 'grid',
+                gap: '20px',
+                gridTemplateColumns: `repeat(${
+                  prizeData.length > 4 ? 4 : prizeData.length
+                }, 1fr)`,
+              }}
+            >
+              <Prizes data={prizeData} />
+            </div>
           ) : (
             <Col span={12} offset={6}>
               <Row justify="center">
@@ -136,13 +143,11 @@ function Result() {
             </Col>
           )}
           {stage === 1 ? (
-            <Col span={8} offset={8}>
-              <Link href="/account">
-                <Button type="primary" block size="large">
-                  Check
-                </Button>
-              </Link>
-            </Col>
+            <Link href="/account">
+              <Button type="primary" size="large">
+                Check
+              </Button>
+            </Link>
           ) : (
             ''
           )}
