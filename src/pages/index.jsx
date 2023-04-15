@@ -30,13 +30,7 @@ function Games() {
   return (
     <>
       <Head>
-        <title>PolyDraw - Games</title>
-        <meta
-          name="description"
-          content="PolyDraw is a fair vending machine that makes the lottery transparent. Everyone can know the remaining number of each prize and win prizes for their draw.."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>PolyDraw | on-chain transparent & fairness lottery</title>
       </Head>
       <main style={{ paddingTop: '100px', paddingBottom: '200px' }}>
         <Text
