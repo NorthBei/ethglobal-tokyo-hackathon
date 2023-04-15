@@ -61,7 +61,7 @@ function PhotoUpload(props) {
       listType="picture-card"
       className="avatar-uploader"
       showUploadList={false}
-      action="http://35.243.96.89:9001/app/ipfs/upload"
+      action="https://maildeep.info/app/ipfs/upload"
       beforeUpload={beforeUpload}
       onChange={handleChange}
     >

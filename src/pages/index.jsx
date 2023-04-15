@@ -1,21 +1,32 @@
 import { Space, Typography } from 'antd';
+import axios from 'axios';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-import gamesImg from '../../public/assets/images/cat.png';
+import cidToImageUrl from '../utils/cidToImageUrl';
 
 const { Text } = Typography;
 
 function Games() {
-  const gameList = [
-    { name: 'Collection 1', id: '100001', price: 1000 },
-    { name: 'Collection 2', id: '100002', price: 1000 },
-    { name: 'Collection 3', id: '100003', price: 1000 },
-    { name: 'Collection 4', id: '100004', price: 1000 },
-    { name: 'Collection 5', id: '100005', price: 1000 },
-  ];
+  const [gameList, setGameList] = useState([]);
 
+  useEffect(() => {
+    axios({
+      baseURL: 'https://maildeep.info/app',
+      url: '/game/list',
+    }).then((res) => {
+      const list =
+        res.data?.data.map((i) => ({
+          ...i,
+          name: i.title,
+          id: i.gameId,
+          img: cidToImageUrl(i.cover),
+        })) || [];
+      setGameList(list);
+    });
+  }, []);
   return (
     <>
       <Head>
@@ -46,57 +57,59 @@ function Games() {
             gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
           }}
         >
-          {gameList.map((game) => (
-            <Link
-              href={`/games/${game.id}`}
-              key={game.id}
-              style={{ width: '100%' }}
-            >
-              <div
-                style={{
-                  padding: '14px',
-                  width: '285px',
-                  minHeight: '384px',
-                  boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.08)',
-                  display: 'block',
-                  overflow: 'hidden',
-                  boxSizing: 'border-box',
-                  borderRadius: '20px',
-                }}
-              >
-                <Image
-                  src={gamesImg}
-                  width={257}
-                  height={257}
-                  alt="games"
-                  style={{ borderRadius: '12px' }}
-                />
-                <Space direction="vertical" style={{ padding: '14px 6px' }}>
-                  <Text
+          {gameList.length
+            ? gameList.map((game) => (
+                <Link
+                  href={`/games/${game.id}`}
+                  key={game.id}
+                  style={{ width: '100%' }}
+                >
+                  <div
                     style={{
-                      lineHeight: '20px',
-                      fontSize: '16px',
-                      whiteSpace: 'nowrap',
-                      fontWeight: '700',
+                      padding: '14px',
+                      width: '285px',
+                      minHeight: '384px',
+                      boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.08)',
+                      display: 'block',
+                      overflow: 'hidden',
+                      boxSizing: 'border-box',
+                      borderRadius: '20px',
                     }}
                   >
-                    {game.name}
-                  </Text>
-                  <Text
-                    style={{
-                      lineHeight: '20px',
-                      fontSize: '16px',
-                      whiteSpace: 'nowrap',
-                      fontWeight: '700',
-                      marginTop: '2px',
-                    }}
-                  >
-                    {game.price} Matic
-                  </Text>
-                </Space>
-              </div>
-            </Link>
-          ))}
+                    <Image
+                      src={game.img}
+                      width={257}
+                      height={257}
+                      alt="games"
+                      style={{ borderRadius: '12px' }}
+                    />
+                    <Space direction="vertical" style={{ padding: '14px 6px' }}>
+                      <Text
+                        style={{
+                          lineHeight: '20px',
+                          fontSize: '16px',
+                          whiteSpace: 'nowrap',
+                          fontWeight: '700',
+                        }}
+                      >
+                        {game.name}
+                      </Text>
+                      <Text
+                        style={{
+                          lineHeight: '20px',
+                          fontSize: '16px',
+                          whiteSpace: 'nowrap',
+                          fontWeight: '700',
+                          marginTop: '2px',
+                        }}
+                      >
+                        {game.price} Matic
+                      </Text>
+                    </Space>
+                  </div>
+                </Link>
+              ))
+            : ''}
         </section>
       </main>
     </>

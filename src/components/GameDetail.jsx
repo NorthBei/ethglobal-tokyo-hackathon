@@ -15,6 +15,7 @@ function GameDetail({
   prizeList,
   onAmountChange,
   onDraw,
+  isConnected,
   isShowNumberCount = true,
 }) {
   return (
@@ -94,7 +95,7 @@ function GameDetail({
                 <Row justify="end">
                   <button
                     type="button"
-                    disabled={!onDraw}
+                    disabled={!onDraw || !isConnected}
                     onClick={onDraw}
                     style={{
                       border: 'none',
@@ -107,7 +108,7 @@ function GameDetail({
                       background: '#2942ed',
                     }}
                   >
-                    Draw
+                    {isConnected ? 'Draw' : 'Please Sign in'}
                   </button>
                 </Row>
               </Col>
