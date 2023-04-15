@@ -1,4 +1,4 @@
-import { Button, Col, Row, Typography } from 'antd';
+import { Button, Col, Row, Spin, Typography } from 'antd';
 import axios from 'axios';
 import find from 'lodash/find';
 import Image from 'next/image';
@@ -129,7 +129,11 @@ function Result() {
               </Row>
             </Col>
           ) : (
-            ''
+            <Col span={12} offset={6}>
+              <Row justify="center">
+                <Spin size="large" />
+              </Row>
+            </Col>
           )}
           {stage === 1 ? (
             <Col span={8} offset={8}>
