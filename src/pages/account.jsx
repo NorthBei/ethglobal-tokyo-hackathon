@@ -287,7 +287,7 @@ function Account() {
           </Col>
         </Row>
       </div>
-      {selectedGameId !== null && claimPrize && (
+      {selectedGameId !== null && claimPrize && isClaimModalOpen && (
         <ClaimModal
           isOpen={isClaimModalOpen}
           onClose={() => {
