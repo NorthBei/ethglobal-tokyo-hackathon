@@ -59,10 +59,11 @@
     padding: 10px;
     .item-img-wrapper {
       position: relative;
-      width: 100%;
+      width: 100px;
       height: 100px;
       overflow: hidden;
       background-color: #000;
+      border-radius: 10px;
     }
     .item-img {
       position: absolute;
