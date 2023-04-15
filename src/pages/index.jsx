@@ -85,7 +85,6 @@ function Games() {
                         style={{
                           lineHeight: '20px',
                           fontSize: '16px',
-                          whiteSpace: 'nowrap',
                           fontWeight: '700',
                         }}
                       >
