@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3080",
     "build": "next build",
+    "build:exp": "next build && next export",
     "start": "next start",
     "lint": "next lint"
   },
