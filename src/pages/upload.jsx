@@ -222,7 +222,6 @@ export default function Upload() {
                 fontSize: '40px',
                 lineHeight: '48px',
                 fontWeight: '700',
-                marginTop: '26px',
                 marginBottom: '26px',
                 width: '100%',
               }}

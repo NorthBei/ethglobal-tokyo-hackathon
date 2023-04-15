@@ -66,14 +66,23 @@ function PhotoUpload(props) {
       onChange={handleChange}
     >
       {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt="avatar"
+        <div
           style={{
-            width: '100%',
+            position: 'relative',
             height: '100%',
+            width: '100%',
           }}
-        />
+        >
+          <Image
+            src={imageUrl}
+            alt="avatar"
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
+            fill
+          />
+        </div>
       ) : (
         uploadButton
       )}

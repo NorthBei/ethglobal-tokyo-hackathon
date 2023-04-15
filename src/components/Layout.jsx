@@ -1,22 +1,26 @@
 import { Layout } from 'antd';
 
-import HeaderComponent from './Header';
+import Header from './Header';
 
 const { Content } = Layout;
 
 export default function LayoutComponent({ children }) {
+  const containerStyle = {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    maxWidth: '1232px',
+    paddingLeft: 'calc(16px + env(safe-area-inset-left))',
+    paddingRight: 'calc(16px + env(safe-area-inset-right))',
+  };
+
   return (
     <Layout>
-      <HeaderComponent />
+      <Header style={containerStyle} />
       <Content
         style={{
           paddingTop: '60px',
           paddingBottom: '180px',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          maxWidth: '1232px',
-          paddingLeft: 'calc(16px + env(safe-area-inset-left))',
-          paddingRight: 'calc(16px + env(safe-area-inset-right))',
+          ...containerStyle,
         }}
       >
         {children}

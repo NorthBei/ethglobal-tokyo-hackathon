@@ -12,10 +12,9 @@ import {
   useSignMessage,
 } from 'wagmi';
 
-// import { shortenAddress } from '@/utils/shortenAddress';
 import defaultProfile from '../../public/assets/images/default-profile.webp';
-import productImg from '../../public/assets/images/product.jpg';
 import ichiban from '../contracts/ichiban';
+import cidToImageUrl from '../utils/cidToImageUrl';
 
 const { Text } = Typography;
 
@@ -48,17 +47,6 @@ function ClaimModal({ isOpen, onClose, gameId, prize }) {
       ]
     );
 
-    console.log(
-      JSON.stringify([
-        ichiban.address,
-        gameId,
-        prize.id,
-        address,
-        userNonce.data + 1,
-        expireTime,
-      ])
-    );
-
     return ethers.utils.arrayify(hex);
   }, [gameId, prize.id, address, userNonce]);
 
@@ -70,11 +58,16 @@ function ClaimModal({ isOpen, onClose, gameId, prize }) {
     message,
   });
 
-  console.log('signature', signature);
-
   const deepLink = useMemo(() => {
-    if (gameId !== null && prize && address && expireTime && signature) {
-      return `https://metamask.app.link/dapp/polydraw.netlify.app/?gameId=${gameId}&prizeType=${prize.id}&prizeOwner=${address}&expireTime=${expireTime}&signature=${signature}`;
+    if (
+      window &&
+      gameId !== null &&
+      prize &&
+      address &&
+      expireTime &&
+      signature
+    ) {
+      return `https://metamask.app.link/dapp/${window.location.host}/redeem?gameId=${gameId}&prizeType=${prize.id}&prizeOwner=${address}&expireTime=${expireTime}&signature=${signature}`;
     }
     return null;
   }, [gameId, prize, address, expireTime, signature]);
@@ -122,7 +115,12 @@ function List({ type, data, onPrizeClaim }) {
             <Row gutter={[20, 12]} justify="space-between" align="middle">
               <Col span={5}>
                 <div className="item-img-wrapper">
-                  <Image src={productImg} alt="" className="item-img" />
+                  <Image
+                    src={cidToImageUrl(prize.ipfs)}
+                    alt=""
+                    height={100}
+                    width={100}
+                  />
                 </div>
               </Col>
               <Col span={4} className="prize">
@@ -151,19 +149,17 @@ function List({ type, data, onPrizeClaim }) {
   );
 }
 
-const fetcher = async (url, address, status) => {
-  try {
-    if (!address) return;
+async function fetcher(url, address, status) {
+  if (address) {
     const res = await axios.get(
       `http://35.243.96.89:9001/app/game/player/prize?address=${`0xf16aa7e201651e7ead5fdd010a5a14589e220826`}&status=${
         status === 'prizes' ? 'ENABLE' : 'DISABLE'
       }`
     );
     if (res.data.code === 'G_0000') return res.data.data;
-  } catch (err) {
-    return err;
   }
-};
+  return null;
+}
 
 function Account() {
   const [type, setType] = useState('prizes'); // prizes / collected
@@ -179,8 +175,6 @@ function Account() {
     ['PlayerGameList', address, type],
     ([url, addr, tabType]) => fetcher(url, addr, tabType)
   );
-
-  // console.log('gameList', gameList);
 
   useEffect(() => {
     if (!gameList && selectedGameId === null) return;
@@ -200,24 +194,7 @@ function Account() {
                 </div>
               </Col>
               <Col span={24}>
-                <Text className="name">
-                  {ensName || address}
-                  {/* {ensName
-                    ? `${ensName} (${shortenAddress(address, 5, 5)})`
-                    : shortenAddress(address, 5, 5)} */}
-                </Text>
-              </Col>
-              <Col span={24}>
-                {/* <div>
-                    <Input
-                      className="balance"
-                      prefix={
-                        <>
-                          <Image src={polygon} alt="" width={25} />
-                        </>
-                      }
-                    />
-                  </div> */}
+                <Text className="name">{ensName || address}</Text>
               </Col>
             </Row>
           </Col>
@@ -241,10 +218,10 @@ function Account() {
                 )}
               </Col>
               <Col span={24} className="list-area">
-                {selectedGameId !== null && gameList ? (
+                {gameList && selectedGameId !== null ? (
                   <List
                     type={type}
-                    data={gameList.playerGameMap[selectedGameId]}
+                    data={gameList.playerGameMap[selectedGameId] || []}
                     onPrizeClaim={(prize) => {
                       setClaimPrize(prize);
                       setClaimModalOpen(true);

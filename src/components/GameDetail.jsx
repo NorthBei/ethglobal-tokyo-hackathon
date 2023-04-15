@@ -30,7 +30,7 @@ function GameDetail({
         alt="game"
         style={{
           position: 'sticky',
-          top: 0,
+          top: '120px',
           maxHeight: '590px',
           // width: '590px',
           // height: '590px',
