@@ -4,7 +4,7 @@ const nextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: true,
-    domains: ['natoboram.gitlab.io'],
+    domains: ['cloudflare-ipfs.com'],
   },
 };
 
