@@ -29,15 +29,15 @@ function Redeem() {
     return userNonce.data + 1;
   }, [userNonce]);
 
-  const { config } = usePrepareContractWrite({
+  const { config, error } = usePrepareContractWrite({
     address: ichiban.address,
     abi: ichiban.abi,
     functionName: 'claimPhysicalPrize',
     args: [gameId, prizeType, prizeOwner, nonce, expireTime, signature],
   });
-
+  console.log(error);
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
-  console.log(data, isLoading, isSuccess);
+  console.log(data, isLoading, isSuccess, write);
 
   useEffect(() => {
     if (!isSuccess) return;
@@ -56,7 +56,12 @@ function Redeem() {
         <Text>Please redeem the prizes.</Text>
       </Row>
       <Row style={{ paddingTop: '15px' }} justify="center">
-        <Button type="primary" shape="round" onClick={redeem} disabled={!write}>
+        <Button
+          type="primary"
+          shape="round"
+          onClick={redeem}
+          disabled={!write || isSuccess}
+        >
           Redeem
         </Button>
       </Row>
