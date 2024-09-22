@@ -102,6 +102,9 @@ https://user-images.githubusercontent.com/15665709/234466033-6c53f1c7-a95f-43d1-
 #### B-4. See the Drawing Result On My Account Page
 ![B-drawing-12-1](https://user-images.githubusercontent.com/15665709/234472099-ba4307bf-f15f-4147-9b45-652f9bf5d6e5.png)
 
+if you participant in many lottery games, you would see what drawing result you got in each lottery game like below
+![FireShot Capture 024 -  - localhost](https://github.com/user-attachments/assets/9e03cbd8-054b-4f7c-80b1-da15480dea11)
+
 #### B-5. In Detail Page, Prize Amount Already Different From A-11 (Prize D change to 48 from 50)
 ![upload-13](https://user-images.githubusercontent.com/15665709/234277501-2a4172fc-a428-4c2f-b9a6-2874708822f1.png)
 
